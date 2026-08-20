@@ -1,5 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
 import Login from './pages/Login.jsx'
+import Dashboard from './pages/Dashboard.jsx'
 import Categorias from './pages/Categorias.jsx'
 import Layout from './components/Layout.jsx'
 import RotaProtegida from './components/RotaProtegida.jsx'
@@ -16,7 +17,7 @@ function App() {
           </RotaProtegida>
         }
       >
-        <Route path="/dashboard" element={<h1>Dashboard</h1>} />
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/categorias" element={<Categorias />} />
       </Route>
     </Routes>
