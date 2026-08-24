@@ -12,6 +12,7 @@ export default function Layout() {
         <Link to="/funcionarios">Funcionários</Link>
         <Link to="/receitas">Receitas</Link>
         <Link to="/despesas">Despesas</Link>
+        <Link to="/relatorios">Relatórios</Link>
         <button onClick={logout}>Sair</button>
       </nav>
 
