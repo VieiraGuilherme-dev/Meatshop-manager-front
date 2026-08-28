@@ -6,6 +6,7 @@ import Funcionarios from './pages/Funcionarios.jsx'
 import Receitas from './pages/Receitas.jsx'
 import Despesas from './pages/Despesas.jsx'
 import Relatorios from './pages/Relatorios.jsx'
+import NaoEncontrado from './pages/NaoEncontrado.jsx'
 import Layout from './components/Layout.jsx'
 import RotaProtegida from './components/RotaProtegida.jsx'
 
@@ -28,6 +29,8 @@ function App() {
         <Route path="/despesas" element={<Despesas />} />
         <Route path="/relatorios" element={<Relatorios />} />
       </Route>
+
+      <Route path="*" element={<NaoEncontrado />} />
     </Routes>
   )
 }

@@ -38,8 +38,8 @@ export default function Funcionarios() {
       const response = await api.get('/api/funcionarios', { params: { page: pagina } })
       setFuncionarios(response.data.content)
       setTotalPaginas(response.data.totalPages ?? 1)
-    } catch {
-      setErro('Erro ao carregar funcionários')
+    } catch (error) {
+      setErro(error.response?.data?.message || 'Erro ao carregar funcionários')
     } finally {
       setCarregando(false)
     }
@@ -83,8 +83,8 @@ export default function Funcionarios() {
       }
       setModalAberto(false)
       await carregarFuncionarios()
-    } catch {
-      setErroForm('Erro ao salvar funcionário')
+    } catch (error) {
+      setErroForm(error.response?.data?.message || 'Erro ao salvar funcionário')
     } finally {
       setSalvando(false)
     }
@@ -97,8 +97,8 @@ export default function Funcionarios() {
     try {
       await api.delete(`/api/funcionarios/${funcionario.id}`)
       await carregarFuncionarios()
-    } catch {
-      window.alert('Erro ao excluir funcionário')
+    } catch (error) {
+      window.alert(error.response?.data?.message || 'Erro ao excluir funcionário')
     }
   }
 
@@ -181,6 +181,7 @@ export default function Funcionarios() {
             <input
               value={form.nome}
               onChange={(e) => setForm({ ...form, nome: e.target.value })}
+              maxLength={255}
               required
             />
           </div>
@@ -191,6 +192,7 @@ export default function Funcionarios() {
             <input
               value={form.cargo}
               onChange={(e) => setForm({ ...form, cargo: e.target.value })}
+              maxLength={255}
               required
             />
           </div>

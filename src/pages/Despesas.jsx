@@ -28,8 +28,8 @@ export default function Despesas() {
       const response = await api.get('/api/expenses', { params: { page: pagina } })
       setDespesas(response.data.content)
       setTotalPaginas(response.data.totalPages ?? 1)
-    } catch {
-      setErro('Erro ao carregar despesas')
+    } catch (error) {
+      setErro(error.response?.data?.message || 'Erro ao carregar despesas')
     } finally {
       setCarregando(false)
     }
@@ -96,8 +96,8 @@ export default function Despesas() {
       }
       setModalAberto(false)
       await carregarDespesas()
-    } catch {
-      setErroForm('Erro ao salvar despesa')
+    } catch (error) {
+      setErroForm(error.response?.data?.message || 'Erro ao salvar despesa')
     } finally {
       setSalvando(false)
     }
@@ -110,8 +110,8 @@ export default function Despesas() {
     try {
       await api.delete(`/api/expenses/${despesa.id}`)
       await carregarDespesas()
-    } catch {
-      window.alert('Erro ao excluir despesa')
+    } catch (error) {
+      window.alert(error.response?.data?.message || 'Erro ao excluir despesa')
     }
   }
 
@@ -173,6 +173,7 @@ export default function Despesas() {
             <input
               value={form.description}
               onChange={(e) => setForm({ ...form, description: e.target.value })}
+              maxLength={255}
               required
             />
           </div>

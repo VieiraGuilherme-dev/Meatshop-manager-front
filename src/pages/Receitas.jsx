@@ -27,8 +27,8 @@ export default function Receitas() {
       const response = await api.get('/api/receitas', { params: { page: pagina } })
       setReceitas(response.data.content)
       setTotalPaginas(response.data.totalPages ?? 1)
-    } catch {
-      setErro('Erro ao carregar receitas')
+    } catch (error) {
+      setErro(error.response?.data?.message || 'Erro ao carregar receitas')
     } finally {
       setCarregando(false)
     }
@@ -83,8 +83,8 @@ export default function Receitas() {
       }
       setModalAberto(false)
       await carregarReceitas()
-    } catch {
-      setErroForm('Erro ao salvar receita')
+    } catch (error) {
+      setErroForm(error.response?.data?.message || 'Erro ao salvar receita')
     } finally {
       setSalvando(false)
     }
@@ -97,8 +97,8 @@ export default function Receitas() {
     try {
       await api.delete(`/api/receitas/${receita.id}`)
       await carregarReceitas()
-    } catch {
-      window.alert('Erro ao excluir receita')
+    } catch (error) {
+      window.alert(error.response?.data?.message || 'Erro ao excluir receita')
     }
   }
 
@@ -153,6 +153,7 @@ export default function Receitas() {
             <input
               value={form.descricao}
               onChange={(e) => setForm({ ...form, descricao: e.target.value })}
+              maxLength={255}
               required
             />
           </div>

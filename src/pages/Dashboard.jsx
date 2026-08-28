@@ -46,8 +46,8 @@ export default function Dashboard() {
         )
 
         setDespesasPorCategoria(porCategoriaResponse.data)
-      } catch {
-        setErro('Não foi possível carregar o dashboard')
+      } catch (error) {
+        setErro(error.response?.data?.message || 'Não foi possível carregar o dashboard')
       } finally {
         setCarregando(false)
       }

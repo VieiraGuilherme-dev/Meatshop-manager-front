@@ -27,8 +27,8 @@ export default function Categorias() {
       const response = await api.get('/api/categorias', { params: { page: pagina } })
       setCategorias(response.data.content)
       setTotalPaginas(response.data.totalPages ?? 1)
-    } catch {
-      setErro('Erro ao carregar categorias')
+    } catch (error) {
+      setErro(error.response?.data?.message || 'Erro ao carregar categorias')
     } finally {
       setCarregando(false)
     }
@@ -65,8 +65,8 @@ export default function Categorias() {
       }
       setModalAberto(false)
       await carregarCategorias()
-    } catch {
-      setErroForm('Erro ao salvar categoria')
+    } catch (error) {
+      setErroForm(error.response?.data?.message || 'Erro ao salvar categoria')
     } finally {
       setSalvando(false)
     }
@@ -79,8 +79,8 @@ export default function Categorias() {
     try {
       await api.delete(`/api/categorias/${categoria.id}`)
       await carregarCategorias()
-    } catch {
-      window.alert('Erro ao excluir categoria')
+    } catch (error) {
+      window.alert(error.response?.data?.message || 'Erro ao excluir categoria')
     }
   }
 
@@ -129,6 +129,7 @@ export default function Categorias() {
             <input
               value={form.nome}
               onChange={(e) => setForm({ ...form, nome: e.target.value })}
+              maxLength={255}
               required
             />
           </div>
@@ -154,6 +155,7 @@ export default function Categorias() {
             <input
               value={form.descricao}
               onChange={(e) => setForm({ ...form, descricao: e.target.value })}
+              maxLength={255}
             />
           </div>
 
