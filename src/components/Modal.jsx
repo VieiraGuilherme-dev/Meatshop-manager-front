@@ -3,31 +3,22 @@ export default function Modal({ aberto, titulo, onFechar, children }) {
 
   return (
     <div
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
+      className="fixed inset-0 bg-black/50 flex items-center justify-center px-4 z-50"
       onClick={onFechar}
     >
       <div
-        style={{
-          backgroundColor: 'white',
-          padding: '24px',
-          borderRadius: '8px',
-          minWidth: '320px',
-        }}
+        className="bg-white rounded-lg shadow-xl w-full max-w-md p-6"
         onClick={(e) => e.stopPropagation()}
       >
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-          <h2>{titulo}</h2>
-          <button onClick={onFechar}>×</button>
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="text-lg font-semibold text-stone-900">{titulo}</h2>
+          <button
+            onClick={onFechar}
+            className="text-stone-400 hover:text-stone-600 text-xl leading-none transition-colors"
+            aria-label="Fechar"
+          >
+            ×
+          </button>
         </div>
 
         {children}
