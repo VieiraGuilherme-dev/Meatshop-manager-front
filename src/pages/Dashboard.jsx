@@ -56,53 +56,65 @@ export default function Dashboard() {
     buscarDados()
   }, [])
 
-  if (carregando) return <p>Carregando...</p>
-  if (erro) return <p style={{ color: 'red' }}>{erro}</p>
+  if (carregando) return <p className="text-sm text-stone-500">Carregando...</p>
+  if (erro) return <p className="text-sm text-red-600">{erro}</p>
 
   return (
     <div>
-      <h1>Dashboard</h1>
+      <h1 className="text-2xl font-bold text-stone-900 mb-6">Dashboard</h1>
 
-      <div style={{ display: 'flex', gap: '16px' }}>
-        <div style={{ border: '1px solid #ccc', padding: '16px', borderRadius: '8px' }}>
-          <p>Total de Receitas</p>
-          <h2>{formatoMoeda.format(lucro.totalReceitas)}</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+        <div className="bg-white rounded-lg border border-stone-200 p-5">
+          <p className="text-sm text-stone-500 mb-1">Total de Receitas</p>
+          <p className="text-2xl font-bold text-green-600">
+            {formatoMoeda.format(lucro.totalReceitas)}
+          </p>
         </div>
 
-        <div style={{ border: '1px solid #ccc', padding: '16px', borderRadius: '8px' }}>
-          <p>Total de Despesas</p>
-          <h2>{formatoMoeda.format(lucro.totalDespesas)}</h2>
+        <div className="bg-white rounded-lg border border-stone-200 p-5">
+          <p className="text-sm text-stone-500 mb-1">Total de Despesas</p>
+          <p className="text-2xl font-bold text-red-600">
+            {formatoMoeda.format(lucro.totalDespesas)}
+          </p>
         </div>
 
-        <div style={{ border: '1px solid #ccc', padding: '16px', borderRadius: '8px' }}>
-          <p>Lucro Real</p>
-          <h2>{formatoMoeda.format(lucro.lucro)}</h2>
+        <div className="bg-amber-50 rounded-lg border border-amber-200 p-5">
+          <p className="text-sm text-amber-800 mb-1">Lucro Real</p>
+          <p className="text-2xl font-bold text-amber-900">
+            {formatoMoeda.format(lucro.lucro)}
+          </p>
         </div>
       </div>
 
-      <div style={{ display: 'flex', gap: '16px', marginTop: '24px' }}>
-        <div style={{ border: '1px solid #ccc', padding: '16px', borderRadius: '8px', flex: 1 }}>
-          <p>Despesas por mês</p>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="bg-white rounded-lg border border-stone-200 p-5">
+          <p className="text-sm font-medium text-stone-700 mb-4">Despesas por mês</p>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={despesasPorMes}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="mes" />
-              <YAxis />
-              <Tooltip formatter={(valor) => formatoMoeda.format(valor)} />
-              <Bar dataKey="total" fill="#8884d8" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#e7e5e4" />
+              <XAxis dataKey="mes" tick={{ fontSize: 12 }} />
+              <YAxis tick={{ fontSize: 12 }} />
+              <Tooltip
+                formatter={(valor) => formatoMoeda.format(valor)}
+                cursor={{ fill: 'transparent' }}
+              />
+              <Bar dataKey="total" fill="#b45309" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
 
-        <div style={{ border: '1px solid #ccc', padding: '16px', borderRadius: '8px', flex: 1 }}>
-          <p>Despesas por categoria</p>
+        <div className="bg-white rounded-lg border border-stone-200 p-5">
+          <p className="text-sm font-medium text-stone-700 mb-4">Despesas por categoria</p>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={despesasPorCategoria}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="categoriaNome" />
-              <YAxis />
-              <Tooltip formatter={(valor) => formatoMoeda.format(valor)} />
-              <Bar dataKey="total" fill="#82ca9d" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#e7e5e4" />
+              <XAxis dataKey="categoriaNome" tick={{ fontSize: 12 }} />
+              <YAxis tick={{ fontSize: 12 }} />
+              <Tooltip
+                formatter={(valor) => formatoMoeda.format(valor)}
+                cursor={{ fill: 'transparent' }}
+              />
+              <Bar dataKey="total" fill="#78716c" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
