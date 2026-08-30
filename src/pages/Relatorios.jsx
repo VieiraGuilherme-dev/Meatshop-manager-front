@@ -53,37 +53,55 @@ export default function Relatorios() {
 
   return (
     <div>
-      <h2>Relatórios</h2>
+      <h1 className="text-2xl font-bold text-stone-900 mb-6">Relatórios</h1>
 
-      <div>
-        <label>Data início</label>
-        <br />
-        <input
-          type="date"
-          value={dataInicio}
-          onChange={(e) => setDataInicio(e.target.value)}
-        />
-      </div>
+      <div className="bg-white rounded-lg border border-stone-200 p-6 max-w-md">
+        <p className="text-sm text-stone-500 mb-5">
+          Selecione o período para exportar o relatório financeiro. Deixe em branco
+          para incluir todo o histórico.
+        </p>
 
-      <div>
-        <label>Data fim</label>
-        <br />
-        <input
-          type="date"
-          value={dataFim}
-          onChange={(e) => setDataFim(e.target.value)}
-        />
-      </div>
+        <div className="flex flex-col gap-4">
+          <div>
+            <label className="block text-sm text-stone-600 mb-1">Data início</label>
+            <input
+              type="date"
+              value={dataInicio}
+              onChange={(e) => setDataInicio(e.target.value)}
+              className="w-full border border-stone-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+            />
+          </div>
 
-      {erro && <p style={{ color: 'red' }}>{erro}</p>}
+          <div>
+            <label className="block text-sm text-stone-600 mb-1">Data fim</label>
+            <input
+              type="date"
+              value={dataFim}
+              onChange={(e) => setDataFim(e.target.value)}
+              className="w-full border border-stone-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+            />
+          </div>
 
-      <div style={{ marginTop: '12px' }}>
-        <button onClick={exportarPdf} disabled={baixandoPdf}>
-          {baixandoPdf ? 'Exportando...' : 'Exportar PDF'}
-        </button>{' '}
-        <button onClick={exportarExcel} disabled={baixandoExcel}>
-          {baixandoExcel ? 'Exportando...' : 'Exportar Excel'}
-        </button>
+          {erro && <p className="text-sm text-red-600">{erro}</p>}
+
+          <div className="flex gap-3 mt-2">
+            <button
+              onClick={exportarPdf}
+              disabled={baixandoPdf}
+              className="bg-amber-700 text-white rounded px-4 py-2 text-sm font-medium hover:bg-amber-800 disabled:bg-stone-400 disabled:cursor-not-allowed transition-colors"
+            >
+              {baixandoPdf ? 'Exportando...' : 'Exportar PDF'}
+            </button>
+
+            <button
+              onClick={exportarExcel}
+              disabled={baixandoExcel}
+              className="border border-stone-300 text-stone-700 rounded px-4 py-2 text-sm font-medium hover:bg-stone-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            >
+              {baixandoExcel ? 'Exportando...' : 'Exportar Excel'}
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   )

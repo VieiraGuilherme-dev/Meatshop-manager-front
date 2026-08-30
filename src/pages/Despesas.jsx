@@ -5,6 +5,10 @@ import TabelaPaginada from '../components/TabelaPaginada'
 
 const formInicial = { description: '', categoriaId: '', funcionarioId: '', amount: '', expenseDate: '' }
 
+const inputClasses =
+  'w-full border border-stone-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent'
+const labelClasses = 'block text-sm font-medium text-stone-700 mb-1'
+
 export default function Despesas() {
   const [despesas, setDespesas] = useState([])
   const [pagina, setPagina] = useState(0)
@@ -136,22 +140,38 @@ export default function Despesas() {
       chave: 'acoes',
       titulo: 'Ações',
       render: (despesa) => (
-        <>
-          <button onClick={() => abrirEdicao(despesa)}>Editar</button>{' '}
-          <button onClick={() => excluirDespesa(despesa)}>Excluir</button>
-        </>
+        <div className="flex gap-2">
+          <button
+            onClick={() => abrirEdicao(despesa)}
+            className="text-stone-600 hover:text-stone-900 font-medium text-sm"
+          >
+            Editar
+          </button>
+          <button
+            onClick={() => excluirDespesa(despesa)}
+            className="text-red-600 hover:text-red-800 font-medium text-sm"
+          >
+            Excluir
+          </button>
+        </div>
       ),
     },
   ]
 
-  if (carregando) return <p>Carregando...</p>
-  if (erro) return <p style={{ color: 'red' }}>{erro}</p>
+  if (carregando) return <p className="text-sm text-stone-500">Carregando...</p>
+  if (erro) return <p className="text-sm text-red-600">{erro}</p>
 
   return (
     <div>
-      <h2>Despesas</h2>
-
-      <button onClick={abrirCriacao}>Nova despesa</button>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold text-stone-900">Despesas</h1>
+        <button
+          onClick={abrirCriacao}
+          className="bg-amber-700 hover:bg-amber-800 text-white text-sm font-medium px-4 py-2 rounded transition-colors"
+        >
+          Nova despesa
+        </button>
+      </div>
 
       <TabelaPaginada
         colunas={colunas}
@@ -167,47 +187,47 @@ export default function Despesas() {
         onFechar={() => setModalAberto(false)}
       >
         <form onSubmit={salvarDespesa}>
-          <div>
-            <label>Descrição</label>
-            <br />
+          <div className="mb-4">
+            <label className={labelClasses}>Descrição</label>
             <input
               value={form.description}
               onChange={(e) => setForm({ ...form, description: e.target.value })}
               maxLength={255}
               required
+              className={inputClasses}
             />
           </div>
 
-          <div>
-            <label>Valor</label>
-            <br />
+          <div className="mb-4">
+            <label className={labelClasses}>Valor</label>
             <input
               type="number"
               step="0.01"
               value={form.amount}
               onChange={(e) => setForm({ ...form, amount: e.target.value })}
               required
+              className={inputClasses}
             />
           </div>
 
-          <div>
-            <label>Data</label>
-            <br />
+          <div className="mb-4">
+            <label className={labelClasses}>Data</label>
             <input
               type="date"
               value={form.expenseDate}
               onChange={(e) => setForm({ ...form, expenseDate: e.target.value })}
               required
+              className={inputClasses}
             />
           </div>
 
-          <div>
-            <label>Categoria</label>
-            <br />
+          <div className="mb-4">
+            <label className={labelClasses}>Categoria</label>
             <select
               value={form.categoriaId}
               onChange={(e) => setForm({ ...form, categoriaId: e.target.value })}
               required
+              className={inputClasses}
             >
               <option value="" disabled>
                 Selecione...
@@ -220,12 +240,12 @@ export default function Despesas() {
             </select>
           </div>
 
-          <div>
-            <label>Funcionário</label>
-            <br />
+          <div className="mb-4">
+            <label className={labelClasses}>Funcionário</label>
             <select
               value={form.funcionarioId}
               onChange={(e) => setForm({ ...form, funcionarioId: e.target.value })}
+              className={inputClasses}
             >
               <option value="">Nenhum</option>
               {funcionarios.map((funcionario) => (
@@ -236,9 +256,13 @@ export default function Despesas() {
             </select>
           </div>
 
-          {erroForm && <p style={{ color: 'red' }}>{erroForm}</p>}
+          {erroForm && <p className="text-sm text-red-600 mb-2">{erroForm}</p>}
 
-          <button type="submit" disabled={salvando} style={{ marginTop: '12px' }}>
+          <button
+            type="submit"
+            disabled={salvando}
+            className="w-full bg-amber-700 text-white rounded px-4 py-2 text-sm font-medium hover:bg-amber-800 disabled:bg-stone-400 disabled:cursor-not-allowed transition-colors mt-2"
+          >
             {salvando ? 'Salvando...' : 'Salvar'}
           </button>
         </form>

@@ -7,6 +7,10 @@ const TIPOS = ['DESPESA', 'RECEITA']
 
 const formInicial = { nome: '', tipo: 'DESPESA', descricao: '' }
 
+const inputClasses =
+  'w-full border border-stone-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent'
+const labelClasses = 'block text-sm font-medium text-stone-700 mb-1'
+
 export default function Categorias() {
   const [categorias, setCategorias] = useState([])
   const [pagina, setPagina] = useState(0)
@@ -92,22 +96,38 @@ export default function Categorias() {
       chave: 'acoes',
       titulo: 'Ações',
       render: (categoria) => (
-        <>
-          <button onClick={() => abrirEdicao(categoria)}>Editar</button>{' '}
-          <button onClick={() => excluirCategoria(categoria)}>Excluir</button>
-        </>
+        <div className="flex gap-2">
+          <button
+            onClick={() => abrirEdicao(categoria)}
+            className="text-stone-600 hover:text-stone-900 font-medium text-sm"
+          >
+            Editar
+          </button>
+          <button
+            onClick={() => excluirCategoria(categoria)}
+            className="text-red-600 hover:text-red-800 font-medium text-sm"
+          >
+            Excluir
+          </button>
+        </div>
       ),
     },
   ]
 
-  if (carregando) return <p>Carregando...</p>
-  if (erro) return <p style={{ color: 'red' }}>{erro}</p>
+  if (carregando) return <p className="text-sm text-stone-500">Carregando...</p>
+  if (erro) return <p className="text-sm text-red-600">{erro}</p>
 
   return (
     <div>
-      <h2>Categorias</h2>
-
-      <button onClick={abrirCriacao}>Nova categoria</button>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold text-stone-900">Categorias</h1>
+        <button
+          onClick={abrirCriacao}
+          className="bg-amber-700 hover:bg-amber-800 text-white text-sm font-medium px-4 py-2 rounded transition-colors"
+        >
+          Nova categoria
+        </button>
+      </div>
 
       <TabelaPaginada
         colunas={colunas}
@@ -123,23 +143,23 @@ export default function Categorias() {
         onFechar={() => setModalAberto(false)}
       >
         <form onSubmit={salvarCategoria}>
-          <div>
-            <label>Nome</label>
-            <br />
+          <div className="mb-4">
+            <label className={labelClasses}>Nome</label>
             <input
               value={form.nome}
               onChange={(e) => setForm({ ...form, nome: e.target.value })}
               maxLength={255}
               required
+              className={inputClasses}
             />
           </div>
 
-          <div>
-            <label>Tipo</label>
-            <br />
+          <div className="mb-4">
+            <label className={labelClasses}>Tipo</label>
             <select
               value={form.tipo}
               onChange={(e) => setForm({ ...form, tipo: e.target.value })}
+              className={inputClasses}
             >
               {TIPOS.map((tipo) => (
                 <option key={tipo} value={tipo}>
@@ -149,19 +169,23 @@ export default function Categorias() {
             </select>
           </div>
 
-          <div>
-            <label>Descrição</label>
-            <br />
+          <div className="mb-4">
+            <label className={labelClasses}>Descrição</label>
             <input
               value={form.descricao}
               onChange={(e) => setForm({ ...form, descricao: e.target.value })}
               maxLength={255}
+              className={inputClasses}
             />
           </div>
 
-          {erroForm && <p style={{ color: 'red' }}>{erroForm}</p>}
+          {erroForm && <p className="text-sm text-red-600 mb-2">{erroForm}</p>}
 
-          <button type="submit" disabled={salvando} style={{ marginTop: '12px' }}>
+          <button
+            type="submit"
+            disabled={salvando}
+            className="w-full bg-amber-700 text-white rounded px-4 py-2 text-sm font-medium hover:bg-amber-800 disabled:bg-stone-400 disabled:cursor-not-allowed transition-colors mt-2"
+          >
             {salvando ? 'Salvando...' : 'Salvar'}
           </button>
         </form>

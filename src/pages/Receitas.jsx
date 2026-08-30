@@ -5,6 +5,10 @@ import TabelaPaginada from '../components/TabelaPaginada'
 
 const formInicial = { descricao: '', valor: '', data: '', categoriaId: '' }
 
+const inputClasses =
+  'w-full border border-stone-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent'
+const labelClasses = 'block text-sm font-medium text-stone-700 mb-1'
+
 export default function Receitas() {
   const [receitas, setReceitas] = useState([])
   const [pagina, setPagina] = useState(0)
@@ -116,22 +120,38 @@ export default function Receitas() {
       chave: 'acoes',
       titulo: 'Ações',
       render: (receita) => (
-        <>
-          <button onClick={() => abrirEdicao(receita)}>Editar</button>{' '}
-          <button onClick={() => excluirReceita(receita)}>Excluir</button>
-        </>
+        <div className="flex gap-2">
+          <button
+            onClick={() => abrirEdicao(receita)}
+            className="text-stone-600 hover:text-stone-900 font-medium text-sm"
+          >
+            Editar
+          </button>
+          <button
+            onClick={() => excluirReceita(receita)}
+            className="text-red-600 hover:text-red-800 font-medium text-sm"
+          >
+            Excluir
+          </button>
+        </div>
       ),
     },
   ]
 
-  if (carregando) return <p>Carregando...</p>
-  if (erro) return <p style={{ color: 'red' }}>{erro}</p>
+  if (carregando) return <p className="text-sm text-stone-500">Carregando...</p>
+  if (erro) return <p className="text-sm text-red-600">{erro}</p>
 
   return (
     <div>
-      <h2>Receitas</h2>
-
-      <button onClick={abrirCriacao}>Nova receita</button>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold text-stone-900">Receitas</h1>
+        <button
+          onClick={abrirCriacao}
+          className="bg-amber-700 hover:bg-amber-800 text-white text-sm font-medium px-4 py-2 rounded transition-colors"
+        >
+          Nova receita
+        </button>
+      </div>
 
       <TabelaPaginada
         colunas={colunas}
@@ -147,47 +167,47 @@ export default function Receitas() {
         onFechar={() => setModalAberto(false)}
       >
         <form onSubmit={salvarReceita}>
-          <div>
-            <label>Descrição</label>
-            <br />
+          <div className="mb-4">
+            <label className={labelClasses}>Descrição</label>
             <input
               value={form.descricao}
               onChange={(e) => setForm({ ...form, descricao: e.target.value })}
               maxLength={255}
               required
+              className={inputClasses}
             />
           </div>
 
-          <div>
-            <label>Valor</label>
-            <br />
+          <div className="mb-4">
+            <label className={labelClasses}>Valor</label>
             <input
               type="number"
               step="0.01"
               value={form.valor}
               onChange={(e) => setForm({ ...form, valor: e.target.value })}
               required
+              className={inputClasses}
             />
           </div>
 
-          <div>
-            <label>Data</label>
-            <br />
+          <div className="mb-4">
+            <label className={labelClasses}>Data</label>
             <input
               type="date"
               value={form.data}
               onChange={(e) => setForm({ ...form, data: e.target.value })}
               required
+              className={inputClasses}
             />
           </div>
 
-          <div>
-            <label>Categoria</label>
-            <br />
+          <div className="mb-4">
+            <label className={labelClasses}>Categoria</label>
             <select
               value={form.categoriaId}
               onChange={(e) => setForm({ ...form, categoriaId: e.target.value })}
               required
+              className={inputClasses}
             >
               <option value="" disabled>
                 Selecione...
@@ -200,9 +220,13 @@ export default function Receitas() {
             </select>
           </div>
 
-          {erroForm && <p style={{ color: 'red' }}>{erroForm}</p>}
+          {erroForm && <p className="text-sm text-red-600 mb-2">{erroForm}</p>}
 
-          <button type="submit" disabled={salvando} style={{ marginTop: '12px' }}>
+          <button
+            type="submit"
+            disabled={salvando}
+            className="w-full bg-amber-700 text-white rounded px-4 py-2 text-sm font-medium hover:bg-amber-800 disabled:bg-stone-400 disabled:cursor-not-allowed transition-colors mt-2"
+          >
             {salvando ? 'Salvando...' : 'Salvar'}
           </button>
         </form>

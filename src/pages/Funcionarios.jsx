@@ -12,6 +12,10 @@ const formInicial = {
   ativo: true,
 }
 
+const inputClasses =
+  'w-full border border-stone-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent'
+const labelClasses = 'block text-sm font-medium text-stone-700 mb-1'
+
 export default function Funcionarios() {
   const [funcionarios, setFuncionarios] = useState([])
   const [pagina, setPagina] = useState(0)
@@ -141,25 +145,46 @@ export default function Funcionarios() {
       chave: 'acoes',
       titulo: 'Ações',
       render: (funcionario) => (
-        <>
-          <button onClick={() => abrirEdicao(funcionario)}>Editar</button>{' '}
-          <button onClick={() => excluirFuncionario(funcionario)}>Excluir</button>{' '}
+        <div className="flex gap-2">
+          <button
+            onClick={() => abrirEdicao(funcionario)}
+            className="text-stone-600 hover:text-stone-900 font-medium text-sm"
+          >
+            Editar
+          </button>
+          <button
+            onClick={() => excluirFuncionario(funcionario)}
+            className="text-red-600 hover:text-red-800 font-medium text-sm"
+          >
+            Excluir
+          </button>
           {funcionario.ativo && (
-            <button onClick={() => abrirDemissao(funcionario)}>Demitir</button>
+            <button
+              onClick={() => abrirDemissao(funcionario)}
+              className="text-amber-700 hover:text-amber-900 font-medium text-sm"
+            >
+              Demitir
+            </button>
           )}
-        </>
+        </div>
       ),
     },
   ]
 
-  if (carregando) return <p>Carregando...</p>
-  if (erro) return <p style={{ color: 'red' }}>{erro}</p>
+  if (carregando) return <p className="text-sm text-stone-500">Carregando...</p>
+  if (erro) return <p className="text-sm text-red-600">{erro}</p>
 
   return (
     <div>
-      <h2>Funcionários</h2>
-
-      <button onClick={abrirCriacao}>Novo funcionário</button>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold text-stone-900">Funcionários</h1>
+        <button
+          onClick={abrirCriacao}
+          className="bg-amber-700 hover:bg-amber-800 text-white text-sm font-medium px-4 py-2 rounded transition-colors"
+        >
+          Novo funcionário
+        </button>
+      </div>
 
       <TabelaPaginada
         colunas={colunas}
@@ -175,53 +200,53 @@ export default function Funcionarios() {
         onFechar={() => setModalAberto(false)}
       >
         <form onSubmit={salvarFuncionario}>
-          <div>
-            <label>Nome</label>
-            <br />
+          <div className="mb-4">
+            <label className={labelClasses}>Nome</label>
             <input
               value={form.nome}
               onChange={(e) => setForm({ ...form, nome: e.target.value })}
               maxLength={255}
               required
+              className={inputClasses}
             />
           </div>
 
-          <div>
-            <label>Cargo</label>
-            <br />
+          <div className="mb-4">
+            <label className={labelClasses}>Cargo</label>
             <input
               value={form.cargo}
               onChange={(e) => setForm({ ...form, cargo: e.target.value })}
               maxLength={255}
               required
+              className={inputClasses}
             />
           </div>
 
-          <div>
-            <label>Salário</label>
-            <br />
+          <div className="mb-4">
+            <label className={labelClasses}>Salário</label>
             <input
               type="number"
               step="0.01"
               value={form.salario}
               onChange={(e) => setForm({ ...form, salario: e.target.value })}
               required
+              className={inputClasses}
             />
           </div>
 
-          <div>
-            <label>Data de admissão</label>
-            <br />
+          <div className="mb-4">
+            <label className={labelClasses}>Data de admissão</label>
             <input
               type="date"
               value={form.dataAdmissao}
               onChange={(e) => setForm({ ...form, dataAdmissao: e.target.value })}
               required
+              className={inputClasses}
             />
           </div>
 
-          <div>
-            <label>
+          <div className="mb-4">
+            <label className="flex items-center gap-2 text-sm text-stone-700">
               <input
                 type="checkbox"
                 checked={form.ativo}
@@ -229,26 +254,31 @@ export default function Funcionarios() {
                   const ativo = e.target.checked
                   setForm({ ...form, ativo, dataDemissao: ativo ? '' : form.dataDemissao })
                 }}
-              />{' '}
+                className="rounded border-stone-300 text-amber-700 focus:ring-amber-500"
+              />
               Ativo
             </label>
           </div>
 
           {!form.ativo && (
-            <div>
-              <label>Data de demissão</label>
-              <br />
+            <div className="mb-4">
+              <label className={labelClasses}>Data de demissão</label>
               <input
                 type="date"
                 value={form.dataDemissao}
                 onChange={(e) => setForm({ ...form, dataDemissao: e.target.value })}
+                className={inputClasses}
               />
             </div>
           )}
 
-          {erroForm && <p style={{ color: 'red' }}>{erroForm}</p>}
+          {erroForm && <p className="text-sm text-red-600 mb-2">{erroForm}</p>}
 
-          <button type="submit" disabled={salvando} style={{ marginTop: '12px' }}>
+          <button
+            type="submit"
+            disabled={salvando}
+            className="w-full bg-amber-700 text-white rounded px-4 py-2 text-sm font-medium hover:bg-amber-800 disabled:bg-stone-400 disabled:cursor-not-allowed transition-colors mt-2"
+          >
             {salvando ? 'Salvando...' : 'Salvar'}
           </button>
         </form>
@@ -260,20 +290,24 @@ export default function Funcionarios() {
         onFechar={() => setModalDemissaoAberto(false)}
       >
         <form onSubmit={confirmarDemissao}>
-          <div>
-            <label>Data de demissão</label>
-            <br />
+          <div className="mb-4">
+            <label className={labelClasses}>Data de demissão</label>
             <input
               type="date"
               value={dataDemissaoForm}
               onChange={(e) => setDataDemissaoForm(e.target.value)}
               required
+              className={inputClasses}
             />
           </div>
 
-          {erroDemissao && <p style={{ color: 'red' }}>{erroDemissao}</p>}
+          {erroDemissao && <p className="text-sm text-red-600 mb-2">{erroDemissao}</p>}
 
-          <button type="submit" disabled={processandoDemissao} style={{ marginTop: '12px' }}>
+          <button
+            type="submit"
+            disabled={processandoDemissao}
+            className="w-full bg-amber-700 text-white rounded px-4 py-2 text-sm font-medium hover:bg-amber-800 disabled:bg-stone-400 disabled:cursor-not-allowed transition-colors mt-2"
+          >
             {processandoDemissao ? 'Processando...' : 'Confirmar demissão'}
           </button>
         </form>
