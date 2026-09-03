@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
+import { Plus, Pencil, Trash2 } from 'lucide-react'
 import api from '../api/axios'
 import Modal from '../components/Modal'
 import TabelaPaginada from '../components/TabelaPaginada'
+import TabelaEsqueleto from '../components/TabelaEsqueleto'
 
 const TIPOS = ['DESPESA', 'RECEITA']
 
@@ -99,22 +101,24 @@ export default function Categorias() {
         <div className="flex gap-2">
           <button
             onClick={() => abrirEdicao(categoria)}
-            className="text-stone-600 hover:text-stone-900 font-medium text-sm"
+            title="Editar"
+            className="text-stone-600 hover:text-stone-900"
           >
-            Editar
+            <Pencil size={16} />
           </button>
           <button
             onClick={() => excluirCategoria(categoria)}
-            className="text-red-600 hover:text-red-800 font-medium text-sm"
+            title="Excluir"
+            className="text-red-600 hover:text-red-800"
           >
-            Excluir
+            <Trash2 size={16} />
           </button>
         </div>
       ),
     },
   ]
 
-  if (carregando) return <p className="text-sm text-stone-500">Carregando...</p>
+  if (carregando) return <TabelaEsqueleto colunas={colunas} />
   if (erro) return <p className="text-sm text-red-600">{erro}</p>
 
   return (
@@ -123,8 +127,9 @@ export default function Categorias() {
         <h1 className="text-2xl font-bold text-stone-900">Categorias</h1>
         <button
           onClick={abrirCriacao}
-          className="bg-amber-700 hover:bg-amber-800 text-white text-sm font-medium px-4 py-2 rounded transition-colors"
+          className="flex items-center gap-2 bg-amber-700 hover:bg-amber-800 text-white text-sm font-medium px-4 py-2 rounded transition-colors"
         >
+          <Plus size={16} />
           Nova categoria
         </button>
       </div>

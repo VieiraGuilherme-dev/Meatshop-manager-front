@@ -9,6 +9,7 @@ import {
   YAxis,
 } from 'recharts'
 import api from '../api/axios'
+import Skeleton from '../components/Skeleton'
 
 const formatoMoeda = new Intl.NumberFormat('pt-BR', {
   style: 'currency',
@@ -56,7 +57,36 @@ export default function Dashboard() {
     buscarDados()
   }, [])
 
-  if (carregando) return <p className="text-sm text-stone-500">Carregando...</p>
+  if (carregando) {
+    return (
+      <div>
+        <h1 className="text-2xl font-bold text-stone-900 mb-6">Dashboard</h1>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+          <div className="bg-white rounded-lg border border-stone-200 p-5">
+            <Skeleton className="h-4 w-28 mb-2" />
+            <Skeleton className="h-8 w-32" />
+          </div>
+
+          <div className="bg-white rounded-lg border border-stone-200 p-5">
+            <Skeleton className="h-4 w-28 mb-2" />
+            <Skeleton className="h-8 w-32" />
+          </div>
+
+          <div className="bg-white rounded-lg border border-stone-200 p-5">
+            <Skeleton className="h-4 w-28 mb-2" />
+            <Skeleton className="h-8 w-32" />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <Skeleton className="h-75 w-full" />
+          <Skeleton className="h-75 w-full" />
+        </div>
+      </div>
+    )
+  }
+
   if (erro) return <p className="text-sm text-red-600">{erro}</p>
 
   return (
