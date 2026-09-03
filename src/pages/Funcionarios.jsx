@@ -4,6 +4,7 @@ import api from '../api/axios'
 import Modal from '../components/Modal'
 import TabelaPaginada from '../components/TabelaPaginada'
 import TabelaEsqueleto from '../components/TabelaEsqueleto'
+import { useToast } from '../contexts/ToastContext'
 
 const formInicial = {
   nome: '',
@@ -19,6 +20,7 @@ const inputClasses =
 const labelClasses = 'block text-sm font-medium text-stone-700 mb-1'
 
 export default function Funcionarios() {
+  const { mostrarToast } = useToast()
   const [funcionarios, setFuncionarios] = useState([])
   const [pagina, setPagina] = useState(0)
   const [totalPaginas, setTotalPaginas] = useState(1)
@@ -89,6 +91,7 @@ export default function Funcionarios() {
       }
       setModalAberto(false)
       await carregarFuncionarios()
+      mostrarToast(funcionarioEditando ? 'Funcionário atualizado' : 'Funcionário criado com sucesso')
     } catch (error) {
       setErroForm(error.response?.data?.message || 'Erro ao salvar funcionário')
     } finally {
@@ -103,6 +106,7 @@ export default function Funcionarios() {
     try {
       await api.delete(`/api/funcionarios/${funcionario.id}`)
       await carregarFuncionarios()
+      mostrarToast('Funcionário excluído')
     } catch (error) {
       window.alert(error.response?.data?.message || 'Erro ao excluir funcionário')
     }
@@ -125,6 +129,7 @@ export default function Funcionarios() {
       })
       setModalDemissaoAberto(false)
       await carregarFuncionarios()
+      mostrarToast('Funcionário demitido')
     } catch (error) {
       setErroDemissao(error.response?.data?.message || 'Erro ao demitir funcionário')
     } finally {

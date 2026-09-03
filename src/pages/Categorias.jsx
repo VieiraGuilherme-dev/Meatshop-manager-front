@@ -4,6 +4,7 @@ import api from '../api/axios'
 import Modal from '../components/Modal'
 import TabelaPaginada from '../components/TabelaPaginada'
 import TabelaEsqueleto from '../components/TabelaEsqueleto'
+import { useToast } from '../contexts/ToastContext'
 
 const TIPOS = ['DESPESA', 'RECEITA']
 
@@ -14,6 +15,7 @@ const inputClasses =
 const labelClasses = 'block text-sm font-medium text-stone-700 mb-1'
 
 export default function Categorias() {
+  const { mostrarToast } = useToast()
   const [categorias, setCategorias] = useState([])
   const [pagina, setPagina] = useState(0)
   const [totalPaginas, setTotalPaginas] = useState(1)
@@ -71,6 +73,7 @@ export default function Categorias() {
       }
       setModalAberto(false)
       await carregarCategorias()
+      mostrarToast(categoriaEditando ? 'Categoria atualizada' : 'Categoria criada com sucesso')
     } catch (error) {
       setErroForm(error.response?.data?.message || 'Erro ao salvar categoria')
     } finally {
@@ -85,6 +88,7 @@ export default function Categorias() {
     try {
       await api.delete(`/api/categorias/${categoria.id}`)
       await carregarCategorias()
+      mostrarToast('Categoria excluída')
     } catch (error) {
       window.alert(error.response?.data?.message || 'Erro ao excluir categoria')
     }

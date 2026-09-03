@@ -4,6 +4,7 @@ import api from '../api/axios'
 import Modal from '../components/Modal'
 import TabelaPaginada from '../components/TabelaPaginada'
 import TabelaEsqueleto from '../components/TabelaEsqueleto'
+import { useToast } from '../contexts/ToastContext'
 
 const formInicial = { descricao: '', valor: '', data: '', categoriaId: '' }
 
@@ -12,6 +13,7 @@ const inputClasses =
 const labelClasses = 'block text-sm font-medium text-stone-700 mb-1'
 
 export default function Receitas() {
+  const { mostrarToast } = useToast()
   const [receitas, setReceitas] = useState([])
   const [pagina, setPagina] = useState(0)
   const [totalPaginas, setTotalPaginas] = useState(1)
@@ -89,6 +91,7 @@ export default function Receitas() {
       }
       setModalAberto(false)
       await carregarReceitas()
+      mostrarToast(receitaEditando ? 'Receita atualizada' : 'Receita criada com sucesso')
     } catch (error) {
       setErroForm(error.response?.data?.message || 'Erro ao salvar receita')
     } finally {
@@ -103,6 +106,7 @@ export default function Receitas() {
     try {
       await api.delete(`/api/receitas/${receita.id}`)
       await carregarReceitas()
+      mostrarToast('Receita excluída')
     } catch (error) {
       window.alert(error.response?.data?.message || 'Erro ao excluir receita')
     }

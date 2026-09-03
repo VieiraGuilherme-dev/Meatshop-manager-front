@@ -4,6 +4,7 @@ import api from '../api/axios'
 import Modal from '../components/Modal'
 import TabelaPaginada from '../components/TabelaPaginada'
 import TabelaEsqueleto from '../components/TabelaEsqueleto'
+import { useToast } from '../contexts/ToastContext'
 
 const formInicial = { description: '', categoriaId: '', funcionarioId: '', amount: '', expenseDate: '' }
 
@@ -12,6 +13,7 @@ const inputClasses =
 const labelClasses = 'block text-sm font-medium text-stone-700 mb-1'
 
 export default function Despesas() {
+  const { mostrarToast } = useToast()
   const [despesas, setDespesas] = useState([])
   const [pagina, setPagina] = useState(0)
   const [totalPaginas, setTotalPaginas] = useState(1)
@@ -102,6 +104,7 @@ export default function Despesas() {
       }
       setModalAberto(false)
       await carregarDespesas()
+      mostrarToast(despesaEditando ? 'Despesa atualizada' : 'Despesa criada com sucesso')
     } catch (error) {
       setErroForm(error.response?.data?.message || 'Erro ao salvar despesa')
     } finally {
@@ -116,6 +119,7 @@ export default function Despesas() {
     try {
       await api.delete(`/api/expenses/${despesa.id}`)
       await carregarDespesas()
+      mostrarToast('Despesa excluída')
     } catch (error) {
       window.alert(error.response?.data?.message || 'Erro ao excluir despesa')
     }
