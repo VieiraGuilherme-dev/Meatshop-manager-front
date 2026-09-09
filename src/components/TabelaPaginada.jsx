@@ -1,4 +1,14 @@
-export default function TabelaPaginada({ colunas, dados, pagina, totalPaginas, onMudarPagina }) {
+import { Inbox } from 'lucide-react'
+
+export default function TabelaPaginada({
+  colunas,
+  dados,
+  pagina,
+  totalPaginas,
+  onMudarPagina,
+  mensagemVazia = 'Nenhum registro encontrado',
+  acaoVazia,
+}) {
   return (
     <div>
       <div className="bg-white rounded-lg border border-stone-200 overflow-hidden">
@@ -18,11 +28,12 @@ export default function TabelaPaginada({ colunas, dados, pagina, totalPaginas, o
           <tbody>
             {dados.length === 0 && (
               <tr>
-                <td
-                  colSpan={colunas.length}
-                  className="px-4 py-8 text-center text-stone-400"
-                >
-                  Nenhum registro encontrado
+                <td colSpan={colunas.length} className="py-12">
+                  <div className="flex flex-col items-center justify-center gap-2 text-center">
+                    <Inbox size={40} className="text-stone-300" />
+                    <p className="text-sm text-stone-500">{mensagemVazia}</p>
+                    {acaoVazia && <div className="mt-2">{acaoVazia}</div>}
+                  </div>
                 </td>
               </tr>
             )}

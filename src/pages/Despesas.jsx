@@ -217,6 +217,18 @@ export default function Despesas() {
         pagina={pagina}
         totalPaginas={totalPaginas}
         onMudarPagina={setPagina}
+        mensagemVazia="Nenhuma despesa cadastrada"
+        acaoVazia={
+          podeGerenciar && (
+            <button
+              onClick={abrirCriacao}
+              className="flex items-center gap-2 bg-amber-700 hover:bg-amber-800 text-white text-sm font-medium px-4 py-2 rounded transition-colors"
+            >
+              <Plus size={16} />
+              Criar primeira despesa
+            </button>
+          )
+        }
       />
 
       <Modal
