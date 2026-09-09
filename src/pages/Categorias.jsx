@@ -3,7 +3,7 @@ import { Plus, Pencil, Trash2 } from 'lucide-react'
 import api from '../api/axios'
 import Modal from '../components/Modal'
 import TabelaPaginada from '../components/TabelaPaginada'
-import TabelaEsqueleto from '../components/TabelaEsqueleto'
+import Skeleton from '../components/Skeleton'
 import { useToast } from '../contexts/ToastContext'
 
 const TIPOS = ['DESPESA', 'RECEITA']
@@ -122,7 +122,25 @@ export default function Categorias() {
     },
   ]
 
-  if (carregando) return <TabelaEsqueleto colunas={colunas} />
+  if (carregando) {
+    const colunasEsqueleto = colunas.map((coluna) => ({
+      chave: coluna.chave,
+      titulo: coluna.titulo,
+      render: () => <Skeleton className="h-4 w-3/4" />,
+    }))
+    const linhasEsqueleto = Array.from({ length: 5 }, (_, indice) => ({ id: `esqueleto-${indice}` }))
+
+    return (
+      <TabelaPaginada
+        colunas={colunasEsqueleto}
+        dados={linhasEsqueleto}
+        pagina={pagina}
+        totalPaginas={totalPaginas}
+        onMudarPagina={setPagina}
+      />
+    )
+  }
+
   if (erro) return <p className="text-sm text-red-600">{erro}</p>
 
   return (
