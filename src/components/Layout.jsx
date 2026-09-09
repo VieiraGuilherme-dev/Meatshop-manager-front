@@ -8,6 +8,7 @@ import {
   TrendingDown,
   FileText,
   LogOut,
+  User,
 } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 
@@ -29,7 +30,7 @@ const links = [
 ]
 
 export default function Layout() {
-  const { logout } = useAuth()
+  const { logout, usuario, role } = useAuth()
   const [sidebarAberta, setSidebarAberta] = useState(false)
 
   return (
@@ -72,6 +73,14 @@ export default function Layout() {
         </nav>
 
         <div className="p-3 border-t border-stone-200">
+          <div className="flex items-center gap-2 px-3 py-2 mb-1">
+            <User size={18} className="text-stone-400 shrink-0" />
+            <div className="min-w-0">
+              <p className="text-sm text-stone-700 truncate">{usuario}</p>
+              <p className="text-xs text-stone-500">{role}</p>
+            </div>
+          </div>
+
           <button
             onClick={logout}
             className="w-full flex items-center gap-3 text-left px-3 py-2 rounded text-sm text-stone-600 hover:bg-stone-100 hover:text-red-600 transition-colors"

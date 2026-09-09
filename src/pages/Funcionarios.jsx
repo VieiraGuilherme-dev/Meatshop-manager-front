@@ -6,6 +6,7 @@ import TabelaPaginada from '../components/TabelaPaginada'
 import Skeleton from '../components/Skeleton'
 import ConfirmarExclusao from '../components/ConfirmarExclusao'
 import { useToast } from '../contexts/ToastContext'
+import { useAuth } from '../contexts/AuthContext'
 
 const formInicial = {
   nome: '',
@@ -22,6 +23,8 @@ const labelClasses = 'block text-sm font-medium text-stone-700 mb-1'
 
 export default function Funcionarios() {
   const { mostrarToast } = useToast()
+  const { role } = useAuth()
+  const podeGerenciar = role === 'ADMIN'
   const [funcionarios, setFuncionarios] = useState([])
   const [pagina, setPagina] = useState(0)
   const [totalPaginas, setTotalPaginas] = useState(1)
@@ -156,33 +159,34 @@ export default function Funcionarios() {
     {
       chave: 'acoes',
       titulo: 'Ações',
-      render: (funcionario) => (
-        <div className="flex gap-2">
-          <button
-            onClick={() => abrirEdicao(funcionario)}
-            title="Editar"
-            className="text-stone-600 hover:text-stone-900"
-          >
-            <Pencil size={16} />
-          </button>
-          <button
-            onClick={() => setFuncionarioExcluindo(funcionario)}
-            title="Excluir"
-            className="text-red-600 hover:text-red-800"
-          >
-            <Trash2 size={16} />
-          </button>
-          {funcionario.ativo && (
+      render: (funcionario) =>
+        podeGerenciar && (
+          <div className="flex gap-2">
             <button
-              onClick={() => abrirDemissao(funcionario)}
-              title="Demitir"
-              className="text-amber-700 hover:text-amber-900"
+              onClick={() => abrirEdicao(funcionario)}
+              title="Editar"
+              className="text-stone-600 hover:text-stone-900"
             >
-              <UserMinus size={16} />
+              <Pencil size={16} />
             </button>
-          )}
-        </div>
-      ),
+            <button
+              onClick={() => setFuncionarioExcluindo(funcionario)}
+              title="Excluir"
+              className="text-red-600 hover:text-red-800"
+            >
+              <Trash2 size={16} />
+            </button>
+            {funcionario.ativo && (
+              <button
+                onClick={() => abrirDemissao(funcionario)}
+                title="Demitir"
+                className="text-amber-700 hover:text-amber-900"
+              >
+                <UserMinus size={16} />
+              </button>
+            )}
+          </div>
+        ),
     },
   ]
 
@@ -211,13 +215,15 @@ export default function Funcionarios() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-stone-900">Funcionários</h1>
-        <button
-          onClick={abrirCriacao}
-          className="flex items-center gap-2 bg-amber-700 hover:bg-amber-800 text-white text-sm font-medium px-4 py-2 rounded transition-colors"
-        >
-          <Plus size={16} />
-          Novo funcionário
-        </button>
+        {podeGerenciar && (
+          <button
+            onClick={abrirCriacao}
+            className="flex items-center gap-2 bg-amber-700 hover:bg-amber-800 text-white text-sm font-medium px-4 py-2 rounded transition-colors"
+          >
+            <Plus size={16} />
+            Novo funcionário
+          </button>
+        )}
       </div>
 
       <TabelaPaginada

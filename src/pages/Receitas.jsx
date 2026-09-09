@@ -6,6 +6,7 @@ import TabelaPaginada from '../components/TabelaPaginada'
 import Skeleton from '../components/Skeleton'
 import ConfirmarExclusao from '../components/ConfirmarExclusao'
 import { useToast } from '../contexts/ToastContext'
+import { useAuth } from '../contexts/AuthContext'
 
 const formInicial = { descricao: '', valor: '', data: '', categoriaId: '' }
 
@@ -15,6 +16,8 @@ const labelClasses = 'block text-sm font-medium text-stone-700 mb-1'
 
 export default function Receitas() {
   const { mostrarToast } = useToast()
+  const { role } = useAuth()
+  const podeGerenciar = role === 'ADMIN'
   const [receitas, setReceitas] = useState([])
   const [pagina, setPagina] = useState(0)
   const [totalPaginas, setTotalPaginas] = useState(1)
@@ -130,24 +133,25 @@ export default function Receitas() {
     {
       chave: 'acoes',
       titulo: 'Ações',
-      render: (receita) => (
-        <div className="flex gap-2">
-          <button
-            onClick={() => abrirEdicao(receita)}
-            title="Editar"
-            className="text-stone-600 hover:text-stone-900"
-          >
-            <Pencil size={16} />
-          </button>
-          <button
-            onClick={() => setReceitaExcluindo(receita)}
-            title="Excluir"
-            className="text-red-600 hover:text-red-800"
-          >
-            <Trash2 size={16} />
-          </button>
-        </div>
-      ),
+      render: (receita) =>
+        podeGerenciar && (
+          <div className="flex gap-2">
+            <button
+              onClick={() => abrirEdicao(receita)}
+              title="Editar"
+              className="text-stone-600 hover:text-stone-900"
+            >
+              <Pencil size={16} />
+            </button>
+            <button
+              onClick={() => setReceitaExcluindo(receita)}
+              title="Excluir"
+              className="text-red-600 hover:text-red-800"
+            >
+              <Trash2 size={16} />
+            </button>
+          </div>
+        ),
     },
   ]
 
@@ -176,13 +180,15 @@ export default function Receitas() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-stone-900">Receitas</h1>
-        <button
-          onClick={abrirCriacao}
-          className="flex items-center gap-2 bg-amber-700 hover:bg-amber-800 text-white text-sm font-medium px-4 py-2 rounded transition-colors"
-        >
-          <Plus size={16} />
-          Nova receita
-        </button>
+        {podeGerenciar && (
+          <button
+            onClick={abrirCriacao}
+            className="flex items-center gap-2 bg-amber-700 hover:bg-amber-800 text-white text-sm font-medium px-4 py-2 rounded transition-colors"
+          >
+            <Plus size={16} />
+            Nova receita
+          </button>
+        )}
       </div>
 
       <TabelaPaginada
