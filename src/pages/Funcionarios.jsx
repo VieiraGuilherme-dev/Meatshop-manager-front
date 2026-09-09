@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Plus, Pencil, Trash2, UserMinus } from 'lucide-react'
 import api from '../api/axios'
 import Modal from '../components/Modal'
@@ -7,6 +7,7 @@ import Skeleton from '../components/Skeleton'
 import ConfirmarExclusao from '../components/ConfirmarExclusao'
 import { useToast } from '../contexts/ToastContext'
 import { useAuth } from '../contexts/AuthContext'
+import { useCrud } from '../hooks/useCrud'
 
 const formInicial = {
   nome: '',
@@ -25,11 +26,19 @@ export default function Funcionarios() {
   const { mostrarToast } = useToast()
   const { role } = useAuth()
   const podeGerenciar = role === 'ADMIN'
-  const [funcionarios, setFuncionarios] = useState([])
-  const [pagina, setPagina] = useState(0)
-  const [totalPaginas, setTotalPaginas] = useState(1)
-  const [carregando, setCarregando] = useState(true)
-  const [erro, setErro] = useState('')
+
+  const {
+    dados: funcionarios,
+    pagina,
+    setPagina,
+    totalPaginas,
+    carregando,
+    erro,
+    carregar,
+    criar,
+    atualizar,
+    excluir,
+  } = useCrud('/api/funcionarios', 'Erro ao carregar funcionários')
 
   const [modalAberto, setModalAberto] = useState(false)
   const [funcionarioEditando, setFuncionarioEditando] = useState(null)
@@ -45,25 +54,6 @@ export default function Funcionarios() {
 
   const [funcionarioExcluindo, setFuncionarioExcluindo] = useState(null)
   const [excluindo, setExcluindo] = useState(false)
-
-  async function carregarFuncionarios() {
-    setCarregando(true)
-    setErro('')
-    try {
-      const response = await api.get('/api/funcionarios', { params: { page: pagina } })
-      setFuncionarios(response.data.content)
-      setTotalPaginas(response.data.totalPages ?? 1)
-    } catch (error) {
-      setErro(error.response?.data?.message || 'Erro ao carregar funcionários')
-    } finally {
-      setCarregando(false)
-    }
-  }
-
-  useEffect(() => {
-    carregarFuncionarios()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pagina])
 
   function abrirCriacao() {
     setFuncionarioEditando(null)
@@ -92,15 +82,14 @@ export default function Funcionarios() {
     setErroForm('')
     try {
       if (funcionarioEditando) {
-        await api.put(`/api/funcionarios/${funcionarioEditando.id}`, form)
+        await atualizar(funcionarioEditando.id, form, 'Erro ao salvar funcionário')
       } else {
-        await api.post('/api/funcionarios', form)
+        await criar(form, 'Erro ao salvar funcionário')
       }
       setModalAberto(false)
-      await carregarFuncionarios()
       mostrarToast(funcionarioEditando ? 'Funcionário atualizado' : 'Funcionário criado com sucesso')
     } catch (error) {
-      setErroForm(error.response?.data?.message || 'Erro ao salvar funcionário')
+      setErroForm(error.message)
     } finally {
       setSalvando(false)
     }
@@ -109,12 +98,11 @@ export default function Funcionarios() {
   async function confirmarExclusao() {
     setExcluindo(true)
     try {
-      await api.delete(`/api/funcionarios/${funcionarioExcluindo.id}`)
-      await carregarFuncionarios()
+      await excluir(funcionarioExcluindo.id, 'Erro ao excluir funcionário')
       mostrarToast('Funcionário excluído')
       setFuncionarioExcluindo(null)
     } catch (error) {
-      window.alert(error.response?.data?.message || 'Erro ao excluir funcionário')
+      window.alert(error.message)
     } finally {
       setExcluindo(false)
     }
@@ -136,7 +124,7 @@ export default function Funcionarios() {
         dataDemissao: dataDemissaoForm,
       })
       setModalDemissaoAberto(false)
-      await carregarFuncionarios()
+      await carregar()
       mostrarToast('Funcionário demitido')
     } catch (error) {
       setErroDemissao(error.response?.data?.message || 'Erro ao demitir funcionário')

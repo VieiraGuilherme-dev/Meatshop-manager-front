@@ -1,12 +1,12 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Plus, Pencil, Trash2 } from 'lucide-react'
-import api from '../api/axios'
 import Modal from '../components/Modal'
 import TabelaPaginada from '../components/TabelaPaginada'
 import Skeleton from '../components/Skeleton'
 import ConfirmarExclusao from '../components/ConfirmarExclusao'
 import { useToast } from '../contexts/ToastContext'
 import { useAuth } from '../contexts/AuthContext'
+import { useCrud } from '../hooks/useCrud'
 
 const TIPOS = ['DESPESA', 'RECEITA']
 
@@ -20,11 +20,18 @@ export default function Categorias() {
   const { mostrarToast } = useToast()
   const { role } = useAuth()
   const podeGerenciar = role === 'ADMIN'
-  const [categorias, setCategorias] = useState([])
-  const [pagina, setPagina] = useState(0)
-  const [totalPaginas, setTotalPaginas] = useState(1)
-  const [carregando, setCarregando] = useState(true)
-  const [erro, setErro] = useState('')
+
+  const {
+    dados: categorias,
+    pagina,
+    setPagina,
+    totalPaginas,
+    carregando,
+    erro,
+    criar,
+    atualizar,
+    excluir,
+  } = useCrud('/api/categorias', 'Erro ao carregar categorias')
 
   const [modalAberto, setModalAberto] = useState(false)
   const [categoriaEditando, setCategoriaEditando] = useState(null)
@@ -34,25 +41,6 @@ export default function Categorias() {
 
   const [categoriaExcluindo, setCategoriaExcluindo] = useState(null)
   const [excluindo, setExcluindo] = useState(false)
-
-  async function carregarCategorias() {
-    setCarregando(true)
-    setErro('')
-    try {
-      const response = await api.get('/api/categorias', { params: { page: pagina } })
-      setCategorias(response.data.content)
-      setTotalPaginas(response.data.totalPages ?? 1)
-    } catch (error) {
-      setErro(error.response?.data?.message || 'Erro ao carregar categorias')
-    } finally {
-      setCarregando(false)
-    }
-  }
-
-  useEffect(() => {
-    carregarCategorias()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pagina])
 
   function abrirCriacao() {
     setCategoriaEditando(null)
@@ -74,15 +62,14 @@ export default function Categorias() {
     setErroForm('')
     try {
       if (categoriaEditando) {
-        await api.put(`/api/categorias/${categoriaEditando.id}`, form)
+        await atualizar(categoriaEditando.id, form, 'Erro ao salvar categoria')
       } else {
-        await api.post('/api/categorias', form)
+        await criar(form, 'Erro ao salvar categoria')
       }
       setModalAberto(false)
-      await carregarCategorias()
       mostrarToast(categoriaEditando ? 'Categoria atualizada' : 'Categoria criada com sucesso')
     } catch (error) {
-      setErroForm(error.response?.data?.message || 'Erro ao salvar categoria')
+      setErroForm(error.message)
     } finally {
       setSalvando(false)
     }
@@ -91,12 +78,11 @@ export default function Categorias() {
   async function confirmarExclusao() {
     setExcluindo(true)
     try {
-      await api.delete(`/api/categorias/${categoriaExcluindo.id}`)
-      await carregarCategorias()
+      await excluir(categoriaExcluindo.id, 'Erro ao excluir categoria')
       mostrarToast('Categoria excluída')
       setCategoriaExcluindo(null)
     } catch (error) {
-      window.alert(error.response?.data?.message || 'Erro ao excluir categoria')
+      window.alert(error.message)
     } finally {
       setExcluindo(false)
     }

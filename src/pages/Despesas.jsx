@@ -7,6 +7,7 @@ import Skeleton from '../components/Skeleton'
 import ConfirmarExclusao from '../components/ConfirmarExclusao'
 import { useToast } from '../contexts/ToastContext'
 import { useAuth } from '../contexts/AuthContext'
+import { useCrud } from '../hooks/useCrud'
 
 const formInicial = { description: '', categoriaId: '', funcionarioId: '', amount: '', expenseDate: '' }
 
@@ -18,11 +19,18 @@ export default function Despesas() {
   const { mostrarToast } = useToast()
   const { role } = useAuth()
   const podeGerenciar = role === 'ADMIN'
-  const [despesas, setDespesas] = useState([])
-  const [pagina, setPagina] = useState(0)
-  const [totalPaginas, setTotalPaginas] = useState(1)
-  const [carregando, setCarregando] = useState(true)
-  const [erro, setErro] = useState('')
+
+  const {
+    dados: despesas,
+    pagina,
+    setPagina,
+    totalPaginas,
+    carregando,
+    erro,
+    criar,
+    atualizar,
+    excluir,
+  } = useCrud('/api/expenses', 'Erro ao carregar despesas')
 
   const [categorias, setCategorias] = useState([])
   const [funcionarios, setFuncionarios] = useState([])
@@ -35,20 +43,6 @@ export default function Despesas() {
 
   const [despesaExcluindo, setDespesaExcluindo] = useState(null)
   const [excluindo, setExcluindo] = useState(false)
-
-  async function carregarDespesas() {
-    setCarregando(true)
-    setErro('')
-    try {
-      const response = await api.get('/api/expenses', { params: { page: pagina } })
-      setDespesas(response.data.content)
-      setTotalPaginas(response.data.totalPages ?? 1)
-    } catch (error) {
-      setErro(error.response?.data?.message || 'Erro ao carregar despesas')
-    } finally {
-      setCarregando(false)
-    }
-  }
 
   async function carregarCategorias() {
     try {
@@ -67,11 +61,6 @@ export default function Despesas() {
       setFuncionarios([])
     }
   }
-
-  useEffect(() => {
-    carregarDespesas()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pagina])
 
   useEffect(() => {
     carregarCategorias()
@@ -105,15 +94,14 @@ export default function Despesas() {
     try {
       const payload = { ...form, funcionarioId: form.funcionarioId || null }
       if (despesaEditando) {
-        await api.put(`/api/expenses/${despesaEditando.id}`, payload)
+        await atualizar(despesaEditando.id, payload, 'Erro ao salvar despesa')
       } else {
-        await api.post('/api/expenses', payload)
+        await criar(payload, 'Erro ao salvar despesa')
       }
       setModalAberto(false)
-      await carregarDespesas()
       mostrarToast(despesaEditando ? 'Despesa atualizada' : 'Despesa criada com sucesso')
     } catch (error) {
-      setErroForm(error.response?.data?.message || 'Erro ao salvar despesa')
+      setErroForm(error.message)
     } finally {
       setSalvando(false)
     }
@@ -122,12 +110,11 @@ export default function Despesas() {
   async function confirmarExclusao() {
     setExcluindo(true)
     try {
-      await api.delete(`/api/expenses/${despesaExcluindo.id}`)
-      await carregarDespesas()
+      await excluir(despesaExcluindo.id, 'Erro ao excluir despesa')
       mostrarToast('Despesa excluída')
       setDespesaExcluindo(null)
     } catch (error) {
-      window.alert(error.response?.data?.message || 'Erro ao excluir despesa')
+      window.alert(error.message)
     } finally {
       setExcluindo(false)
     }

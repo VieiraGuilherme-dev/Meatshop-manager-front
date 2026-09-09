@@ -7,6 +7,7 @@ import Skeleton from '../components/Skeleton'
 import ConfirmarExclusao from '../components/ConfirmarExclusao'
 import { useToast } from '../contexts/ToastContext'
 import { useAuth } from '../contexts/AuthContext'
+import { useCrud } from '../hooks/useCrud'
 
 const formInicial = { descricao: '', valor: '', data: '', categoriaId: '' }
 
@@ -18,11 +19,18 @@ export default function Receitas() {
   const { mostrarToast } = useToast()
   const { role } = useAuth()
   const podeGerenciar = role === 'ADMIN'
-  const [receitas, setReceitas] = useState([])
-  const [pagina, setPagina] = useState(0)
-  const [totalPaginas, setTotalPaginas] = useState(1)
-  const [carregando, setCarregando] = useState(true)
-  const [erro, setErro] = useState('')
+
+  const {
+    dados: receitas,
+    pagina,
+    setPagina,
+    totalPaginas,
+    carregando,
+    erro,
+    criar,
+    atualizar,
+    excluir,
+  } = useCrud('/api/receitas', 'Erro ao carregar receitas')
 
   const [categorias, setCategorias] = useState([])
 
@@ -35,20 +43,6 @@ export default function Receitas() {
   const [receitaExcluindo, setReceitaExcluindo] = useState(null)
   const [excluindo, setExcluindo] = useState(false)
 
-  async function carregarReceitas() {
-    setCarregando(true)
-    setErro('')
-    try {
-      const response = await api.get('/api/receitas', { params: { page: pagina } })
-      setReceitas(response.data.content)
-      setTotalPaginas(response.data.totalPages ?? 1)
-    } catch (error) {
-      setErro(error.response?.data?.message || 'Erro ao carregar receitas')
-    } finally {
-      setCarregando(false)
-    }
-  }
-
   async function carregarCategorias() {
     try {
       const response = await api.get('/api/categorias')
@@ -57,11 +51,6 @@ export default function Receitas() {
       setCategorias([])
     }
   }
-
-  useEffect(() => {
-    carregarReceitas()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pagina])
 
   useEffect(() => {
     carregarCategorias()
@@ -92,15 +81,14 @@ export default function Receitas() {
     setErroForm('')
     try {
       if (receitaEditando) {
-        await api.put(`/api/receitas/${receitaEditando.id}`, form)
+        await atualizar(receitaEditando.id, form, 'Erro ao salvar receita')
       } else {
-        await api.post('/api/receitas', form)
+        await criar(form, 'Erro ao salvar receita')
       }
       setModalAberto(false)
-      await carregarReceitas()
       mostrarToast(receitaEditando ? 'Receita atualizada' : 'Receita criada com sucesso')
     } catch (error) {
-      setErroForm(error.response?.data?.message || 'Erro ao salvar receita')
+      setErroForm(error.message)
     } finally {
       setSalvando(false)
     }
@@ -109,12 +97,11 @@ export default function Receitas() {
   async function confirmarExclusao() {
     setExcluindo(true)
     try {
-      await api.delete(`/api/receitas/${receitaExcluindo.id}`)
-      await carregarReceitas()
+      await excluir(receitaExcluindo.id, 'Erro ao excluir receita')
       mostrarToast('Receita excluída')
       setReceitaExcluindo(null)
     } catch (error) {
-      window.alert(error.response?.data?.message || 'Erro ao excluir receita')
+      window.alert(error.message)
     } finally {
       setExcluindo(false)
     }
