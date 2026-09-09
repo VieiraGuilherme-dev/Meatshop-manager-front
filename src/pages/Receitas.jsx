@@ -4,6 +4,7 @@ import api from '../api/axios'
 import Modal from '../components/Modal'
 import TabelaPaginada from '../components/TabelaPaginada'
 import Skeleton from '../components/Skeleton'
+import ConfirmarExclusao from '../components/ConfirmarExclusao'
 import { useToast } from '../contexts/ToastContext'
 
 const formInicial = { descricao: '', valor: '', data: '', categoriaId: '' }
@@ -27,6 +28,9 @@ export default function Receitas() {
   const [form, setForm] = useState(formInicial)
   const [salvando, setSalvando] = useState(false)
   const [erroForm, setErroForm] = useState('')
+
+  const [receitaExcluindo, setReceitaExcluindo] = useState(null)
+  const [excluindo, setExcluindo] = useState(false)
 
   async function carregarReceitas() {
     setCarregando(true)
@@ -99,16 +103,17 @@ export default function Receitas() {
     }
   }
 
-  async function excluirReceita(receita) {
-    const confirmado = window.confirm(`Excluir a receita "${receita.descricao}"?`)
-    if (!confirmado) return
-
+  async function confirmarExclusao() {
+    setExcluindo(true)
     try {
-      await api.delete(`/api/receitas/${receita.id}`)
+      await api.delete(`/api/receitas/${receitaExcluindo.id}`)
       await carregarReceitas()
       mostrarToast('Receita excluída')
+      setReceitaExcluindo(null)
     } catch (error) {
       window.alert(error.response?.data?.message || 'Erro ao excluir receita')
+    } finally {
+      setExcluindo(false)
     }
   }
 
@@ -135,7 +140,7 @@ export default function Receitas() {
             <Pencil size={16} />
           </button>
           <button
-            onClick={() => excluirReceita(receita)}
+            onClick={() => setReceitaExcluindo(receita)}
             title="Excluir"
             className="text-red-600 hover:text-red-800"
           >
@@ -258,6 +263,15 @@ export default function Receitas() {
           </button>
         </form>
       </Modal>
+
+      <ConfirmarExclusao
+        aberto={Boolean(receitaExcluindo)}
+        titulo="Excluir receita"
+        mensagem={`Tem certeza que deseja excluir a receita ${receitaExcluindo?.descricao}? Esta ação não pode ser desfeita.`}
+        onConfirmar={confirmarExclusao}
+        onCancelar={() => setReceitaExcluindo(null)}
+        carregando={excluindo}
+      />
     </div>
   )
 }

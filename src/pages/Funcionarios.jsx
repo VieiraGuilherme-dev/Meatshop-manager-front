@@ -4,6 +4,7 @@ import api from '../api/axios'
 import Modal from '../components/Modal'
 import TabelaPaginada from '../components/TabelaPaginada'
 import Skeleton from '../components/Skeleton'
+import ConfirmarExclusao from '../components/ConfirmarExclusao'
 import { useToast } from '../contexts/ToastContext'
 
 const formInicial = {
@@ -38,6 +39,9 @@ export default function Funcionarios() {
   const [dataDemissaoForm, setDataDemissaoForm] = useState('')
   const [processandoDemissao, setProcessandoDemissao] = useState(false)
   const [erroDemissao, setErroDemissao] = useState('')
+
+  const [funcionarioExcluindo, setFuncionarioExcluindo] = useState(null)
+  const [excluindo, setExcluindo] = useState(false)
 
   async function carregarFuncionarios() {
     setCarregando(true)
@@ -99,16 +103,17 @@ export default function Funcionarios() {
     }
   }
 
-  async function excluirFuncionario(funcionario) {
-    const confirmado = window.confirm(`Excluir o funcionário "${funcionario.nome}"?`)
-    if (!confirmado) return
-
+  async function confirmarExclusao() {
+    setExcluindo(true)
     try {
-      await api.delete(`/api/funcionarios/${funcionario.id}`)
+      await api.delete(`/api/funcionarios/${funcionarioExcluindo.id}`)
       await carregarFuncionarios()
       mostrarToast('Funcionário excluído')
+      setFuncionarioExcluindo(null)
     } catch (error) {
       window.alert(error.response?.data?.message || 'Erro ao excluir funcionário')
+    } finally {
+      setExcluindo(false)
     }
   }
 
@@ -161,7 +166,7 @@ export default function Funcionarios() {
             <Pencil size={16} />
           </button>
           <button
-            onClick={() => excluirFuncionario(funcionario)}
+            onClick={() => setFuncionarioExcluindo(funcionario)}
             title="Excluir"
             className="text-red-600 hover:text-red-800"
           >
@@ -341,6 +346,15 @@ export default function Funcionarios() {
           </button>
         </form>
       </Modal>
+
+      <ConfirmarExclusao
+        aberto={Boolean(funcionarioExcluindo)}
+        titulo="Excluir funcionário"
+        mensagem={`Tem certeza que deseja excluir o funcionário ${funcionarioExcluindo?.nome}? Esta ação não pode ser desfeita.`}
+        onConfirmar={confirmarExclusao}
+        onCancelar={() => setFuncionarioExcluindo(null)}
+        carregando={excluindo}
+      />
     </div>
   )
 }

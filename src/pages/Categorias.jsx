@@ -4,6 +4,7 @@ import api from '../api/axios'
 import Modal from '../components/Modal'
 import TabelaPaginada from '../components/TabelaPaginada'
 import Skeleton from '../components/Skeleton'
+import ConfirmarExclusao from '../components/ConfirmarExclusao'
 import { useToast } from '../contexts/ToastContext'
 
 const TIPOS = ['DESPESA', 'RECEITA']
@@ -27,6 +28,9 @@ export default function Categorias() {
   const [form, setForm] = useState(formInicial)
   const [salvando, setSalvando] = useState(false)
   const [erroForm, setErroForm] = useState('')
+
+  const [categoriaExcluindo, setCategoriaExcluindo] = useState(null)
+  const [excluindo, setExcluindo] = useState(false)
 
   async function carregarCategorias() {
     setCarregando(true)
@@ -81,16 +85,17 @@ export default function Categorias() {
     }
   }
 
-  async function excluirCategoria(categoria) {
-    const confirmado = window.confirm(`Excluir a categoria "${categoria.nome}"?`)
-    if (!confirmado) return
-
+  async function confirmarExclusao() {
+    setExcluindo(true)
     try {
-      await api.delete(`/api/categorias/${categoria.id}`)
+      await api.delete(`/api/categorias/${categoriaExcluindo.id}`)
       await carregarCategorias()
       mostrarToast('Categoria excluída')
+      setCategoriaExcluindo(null)
     } catch (error) {
       window.alert(error.response?.data?.message || 'Erro ao excluir categoria')
+    } finally {
+      setExcluindo(false)
     }
   }
 
@@ -111,7 +116,7 @@ export default function Categorias() {
             <Pencil size={16} />
           </button>
           <button
-            onClick={() => excluirCategoria(categoria)}
+            onClick={() => setCategoriaExcluindo(categoria)}
             title="Excluir"
             className="text-red-600 hover:text-red-800"
           >
@@ -217,6 +222,15 @@ export default function Categorias() {
           </button>
         </form>
       </Modal>
+
+      <ConfirmarExclusao
+        aberto={Boolean(categoriaExcluindo)}
+        titulo="Excluir categoria"
+        mensagem={`Tem certeza que deseja excluir a categoria ${categoriaExcluindo?.nome}? Esta ação não pode ser desfeita.`}
+        onConfirmar={confirmarExclusao}
+        onCancelar={() => setCategoriaExcluindo(null)}
+        carregando={excluindo}
+      />
     </div>
   )
 }

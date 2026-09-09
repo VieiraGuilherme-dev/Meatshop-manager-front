@@ -4,6 +4,7 @@ import api from '../api/axios'
 import Modal from '../components/Modal'
 import TabelaPaginada from '../components/TabelaPaginada'
 import Skeleton from '../components/Skeleton'
+import ConfirmarExclusao from '../components/ConfirmarExclusao'
 import { useToast } from '../contexts/ToastContext'
 
 const formInicial = { description: '', categoriaId: '', funcionarioId: '', amount: '', expenseDate: '' }
@@ -28,6 +29,9 @@ export default function Despesas() {
   const [form, setForm] = useState(formInicial)
   const [salvando, setSalvando] = useState(false)
   const [erroForm, setErroForm] = useState('')
+
+  const [despesaExcluindo, setDespesaExcluindo] = useState(null)
+  const [excluindo, setExcluindo] = useState(false)
 
   async function carregarDespesas() {
     setCarregando(true)
@@ -112,16 +116,17 @@ export default function Despesas() {
     }
   }
 
-  async function excluirDespesa(despesa) {
-    const confirmado = window.confirm(`Excluir a despesa "${despesa.description}"?`)
-    if (!confirmado) return
-
+  async function confirmarExclusao() {
+    setExcluindo(true)
     try {
-      await api.delete(`/api/expenses/${despesa.id}`)
+      await api.delete(`/api/expenses/${despesaExcluindo.id}`)
       await carregarDespesas()
       mostrarToast('Despesa excluída')
+      setDespesaExcluindo(null)
     } catch (error) {
       window.alert(error.response?.data?.message || 'Erro ao excluir despesa')
+    } finally {
+      setExcluindo(false)
     }
   }
 
@@ -155,7 +160,7 @@ export default function Despesas() {
             <Pencil size={16} />
           </button>
           <button
-            onClick={() => excluirDespesa(despesa)}
+            onClick={() => setDespesaExcluindo(despesa)}
             title="Excluir"
             className="text-red-600 hover:text-red-800"
           >
@@ -294,6 +299,15 @@ export default function Despesas() {
           </button>
         </form>
       </Modal>
+
+      <ConfirmarExclusao
+        aberto={Boolean(despesaExcluindo)}
+        titulo="Excluir despesa"
+        mensagem={`Tem certeza que deseja excluir a despesa ${despesaExcluindo?.description}? Esta ação não pode ser desfeita.`}
+        onConfirmar={confirmarExclusao}
+        onCancelar={() => setDespesaExcluindo(null)}
+        carregando={excluindo}
+      />
     </div>
   )
 }
