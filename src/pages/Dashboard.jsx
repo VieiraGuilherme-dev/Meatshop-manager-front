@@ -108,8 +108,8 @@ export default function Dashboard() {
           </p>
         </div>
 
-        <div className="bg-amber-50 rounded-lg border border-amber-200 p-5">
-          <p className="text-sm text-amber-800 mb-1">Lucro Real</p>
+        <div className="bg-brand-50 rounded-lg border border-brand-500/20 p-5">
+          <p className="text-sm text-brand-700 mb-1">Lucro Real</p>
           <p className="text-2xl font-bold text-amber-900">
             {formatoMoeda.format(lucro.lucro)}
           </p>
@@ -128,7 +128,7 @@ export default function Dashboard() {
                 formatter={(valor) => formatoMoeda.format(valor)}
                 cursor={{ fill: 'transparent' }}
               />
-              <Bar dataKey="total" fill="#b45309" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="total" fill="#B9570A" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>

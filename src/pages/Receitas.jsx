@@ -12,7 +12,7 @@ import { useCrud } from '../hooks/useCrud'
 const formInicial = { descricao: '', valor: '', data: '', categoriaId: '' }
 
 const inputClasses =
-  'w-full border border-stone-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent'
+  'w-full border border-stone-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent'
 const labelClasses = 'block text-sm font-medium text-stone-700 mb-1'
 
 export default function Receitas() {
@@ -170,7 +170,7 @@ export default function Receitas() {
         {podeGerenciar && (
           <button
             onClick={abrirCriacao}
-            className="flex items-center gap-2 bg-amber-700 hover:bg-amber-800 text-white text-sm font-medium px-4 py-2 rounded transition-colors"
+            className="flex items-center gap-2 bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium px-4 py-2 rounded transition-colors"
           >
             <Plus size={16} />
             Nova receita
@@ -189,7 +189,7 @@ export default function Receitas() {
           podeGerenciar && (
             <button
               onClick={abrirCriacao}
-              className="flex items-center gap-2 bg-amber-700 hover:bg-amber-800 text-white text-sm font-medium px-4 py-2 rounded transition-colors"
+              className="flex items-center gap-2 bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium px-4 py-2 rounded transition-colors"
             >
               <Plus size={16} />
               Criar primeira receita
@@ -262,7 +262,7 @@ export default function Receitas() {
           <button
             type="submit"
             disabled={salvando}
-            className="w-full bg-amber-700 text-white rounded px-4 py-2 text-sm font-medium hover:bg-amber-800 disabled:bg-stone-400 disabled:cursor-not-allowed transition-colors mt-2"
+            className="w-full bg-brand-500 text-white rounded px-4 py-2 text-sm font-medium hover:bg-brand-600 disabled:bg-stone-400 disabled:cursor-not-allowed transition-colors mt-2"
           >
             {salvando ? 'Salvando...' : 'Salvar'}
           </button>

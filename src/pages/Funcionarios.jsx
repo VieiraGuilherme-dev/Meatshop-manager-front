@@ -19,7 +19,7 @@ const formInicial = {
 }
 
 const inputClasses =
-  'w-full border border-stone-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent'
+  'w-full border border-stone-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent'
 const labelClasses = 'block text-sm font-medium text-stone-700 mb-1'
 
 export default function Funcionarios() {
@@ -168,7 +168,7 @@ export default function Funcionarios() {
               <button
                 onClick={() => abrirDemissao(funcionario)}
                 title="Demitir"
-                className="text-amber-700 hover:text-amber-900"
+                className="text-brand-700 hover:text-amber-900"
               >
                 <UserMinus size={16} />
               </button>
@@ -206,7 +206,7 @@ export default function Funcionarios() {
         {podeGerenciar && (
           <button
             onClick={abrirCriacao}
-            className="flex items-center gap-2 bg-amber-700 hover:bg-amber-800 text-white text-sm font-medium px-4 py-2 rounded transition-colors"
+            className="flex items-center gap-2 bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium px-4 py-2 rounded transition-colors"
           >
             <Plus size={16} />
             Novo funcionário
@@ -225,7 +225,7 @@ export default function Funcionarios() {
           podeGerenciar && (
             <button
               onClick={abrirCriacao}
-              className="flex items-center gap-2 bg-amber-700 hover:bg-amber-800 text-white text-sm font-medium px-4 py-2 rounded transition-colors"
+              className="flex items-center gap-2 bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium px-4 py-2 rounded transition-colors"
             >
               <Plus size={16} />
               Criar primeiro funcionário
@@ -294,7 +294,7 @@ export default function Funcionarios() {
                   const ativo = e.target.checked
                   setForm({ ...form, ativo, dataDemissao: ativo ? '' : form.dataDemissao })
                 }}
-                className="rounded border-stone-300 text-amber-700 focus:ring-amber-500"
+                className="rounded border-stone-300 text-brand-700 focus:ring-brand-500"
               />
               Ativo
             </label>
@@ -317,7 +317,7 @@ export default function Funcionarios() {
           <button
             type="submit"
             disabled={salvando}
-            className="w-full bg-amber-700 text-white rounded px-4 py-2 text-sm font-medium hover:bg-amber-800 disabled:bg-stone-400 disabled:cursor-not-allowed transition-colors mt-2"
+            className="w-full bg-brand-500 text-white rounded px-4 py-2 text-sm font-medium hover:bg-brand-600 disabled:bg-stone-400 disabled:cursor-not-allowed transition-colors mt-2"
           >
             {salvando ? 'Salvando...' : 'Salvar'}
           </button>
@@ -346,7 +346,7 @@ export default function Funcionarios() {
           <button
             type="submit"
             disabled={processandoDemissao}
-            className="w-full bg-amber-700 text-white rounded px-4 py-2 text-sm font-medium hover:bg-amber-800 disabled:bg-stone-400 disabled:cursor-not-allowed transition-colors mt-2"
+            className="w-full bg-brand-500 text-white rounded px-4 py-2 text-sm font-medium hover:bg-brand-600 disabled:bg-stone-400 disabled:cursor-not-allowed transition-colors mt-2"
           >
             {processandoDemissao ? 'Processando...' : 'Confirmar demissão'}
           </button>

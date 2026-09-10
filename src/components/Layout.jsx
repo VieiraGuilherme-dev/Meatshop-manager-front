@@ -17,7 +17,7 @@ const linkBase = 'flex items-center gap-3 px-3 py-2 text-sm rounded transition-c
 
 function classesLink({ isActive }) {
   return isActive
-    ? `${linkBase} bg-amber-50 text-amber-800 font-medium`
+    ? `${linkBase} bg-brand-50 text-brand-700 font-medium`
     : `${linkBase} text-stone-600 hover:bg-stone-100 hover:text-stone-900`
 }
 
@@ -35,7 +35,7 @@ export default function Layout() {
   const [sidebarAberta, setSidebarAberta] = useState(false)
 
   return (
-    <div className="min-h-screen bg-stone-100">
+    <div className="min-h-screen bg-brand-100">
       {sidebarAberta && (
         <div
           className="fixed inset-0 bg-black/50 z-30 md:hidden"
@@ -50,7 +50,7 @@ export default function Layout() {
       >
         <div className="flex items-center justify-between px-4 py-5 border-b border-stone-200">
           <div className="flex items-center gap-3">
-            <div className="bg-amber-700 rounded-lg p-2">
+            <div className="bg-brand-500 rounded-lg p-2">
               <Beef size={20} className="text-white" />
             </div>
             <div>
@@ -113,10 +113,10 @@ export default function Layout() {
               <line x1="3" y1="18" x2="21" y2="18" strokeLinecap="round" />
             </svg>
           </button>
-          <span className="font-bold text-amber-800">MeatShop</span>
+          <span className="font-bold text-brand-700">MeatShop</span>
         </div>
 
-        <main className="min-h-screen bg-stone-100 p-4 md:p-8">
+        <main className="min-h-screen bg-brand-100 p-4 md:p-8">
           <Outlet />
         </main>
       </div>
