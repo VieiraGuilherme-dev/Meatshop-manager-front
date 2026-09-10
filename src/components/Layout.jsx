@@ -21,13 +21,29 @@ function classesLink({ isActive }) {
     : `${linkBase} text-stone-600 hover:bg-stone-100 hover:text-stone-900`
 }
 
-const links = [
-  { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/categorias', label: 'Categorias', icon: Tags },
-  { to: '/funcionarios', label: 'Funcionários', icon: Users },
-  { to: '/receitas', label: 'Receitas', icon: TrendingUp },
-  { to: '/despesas', label: 'Despesas', icon: TrendingDown },
-  { to: '/relatorios', label: 'Relatórios', icon: FileText },
+const grupos = [
+  {
+    titulo: 'Principal',
+    links: [{ to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard }],
+  },
+  {
+    titulo: 'Financeiro',
+    links: [
+      { to: '/receitas', label: 'Receitas', icon: TrendingUp },
+      { to: '/despesas', label: 'Despesas', icon: TrendingDown },
+    ],
+  },
+  {
+    titulo: 'Gestão',
+    links: [
+      { to: '/funcionarios', label: 'Funcionários', icon: Users },
+      { to: '/categorias', label: 'Categorias', icon: Tags },
+    ],
+  },
+  {
+    titulo: 'Relatórios',
+    links: [{ to: '/relatorios', label: 'Relatórios', icon: FileText }],
+  },
 ]
 
 export default function Layout() {
@@ -67,17 +83,31 @@ export default function Layout() {
           </button>
         </div>
 
-        <nav className="flex-1 overflow-y-auto px-3 py-4 flex flex-col gap-1">
-          {links.map((link) => (
-            <NavLink
-              key={link.to}
-              to={link.to}
-              className={classesLink}
-              onClick={() => setSidebarAberta(false)}
-            >
-              <link.icon size={18} />
-              {link.label}
-            </NavLink>
+        <nav className="flex-1 overflow-y-auto px-3 py-4">
+          {grupos.map((grupo, indice) => (
+            <div key={grupo.titulo}>
+              <p
+                className={`text-xs font-semibold text-stone-400 uppercase tracking-wide px-4 mb-1 ${
+                  indice === 0 ? '' : 'mt-6'
+                }`}
+              >
+                {grupo.titulo}
+              </p>
+
+              <div className="flex flex-col gap-1">
+                {grupo.links.map((link) => (
+                  <NavLink
+                    key={link.to}
+                    to={link.to}
+                    className={classesLink}
+                    onClick={() => setSidebarAberta(false)}
+                  >
+                    <link.icon size={18} />
+                    {link.label}
+                  </NavLink>
+                ))}
+              </div>
+            </div>
           ))}
         </nav>
 
