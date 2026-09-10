@@ -9,6 +9,7 @@ import {
   FileText,
   LogOut,
   User,
+  Beef,
 } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 
@@ -47,8 +48,16 @@ export default function Layout() {
           sidebarAberta ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <div className="h-14 flex items-center justify-between px-4 border-b border-stone-200">
-          <span className="font-bold text-amber-800">MeatShop</span>
+        <div className="flex items-center justify-between px-4 py-5 border-b border-stone-200">
+          <div className="flex items-center gap-3">
+            <div className="bg-amber-700 rounded-lg p-2">
+              <Beef size={20} className="text-white" />
+            </div>
+            <div>
+              <p className="font-bold text-stone-900 leading-tight">MeatShop</p>
+              <p className="text-xs text-stone-500">Gestão financeira</p>
+            </div>
+          </div>
           <button
             onClick={() => setSidebarAberta(false)}
             aria-label="Fechar menu"
