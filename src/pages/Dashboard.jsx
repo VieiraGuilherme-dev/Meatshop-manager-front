@@ -11,6 +11,7 @@ import {
 } from 'recharts'
 import api from '../api/axios'
 import Skeleton from '../components/Skeleton'
+import Variacao from '../components/Variacao'
 import { useAuth } from '../contexts/AuthContext'
 import { formatarMoeda } from '../utils/formatadores'
 
@@ -29,7 +30,7 @@ function obterSaudacao() {
 export default function Dashboard() {
   const { usuario } = useAuth()
   const nomeUsuario = usuario?.split('@')[0] ?? ''
-  const [lucro, setLucro] = useState(null)
+  const [resumo, setResumo] = useState(null)
   const [despesasPorMes, setDespesasPorMes] = useState([])
   const [despesasPorCategoria, setDespesasPorCategoria] = useState([])
   const [carregando, setCarregando] = useState(true)
@@ -38,13 +39,13 @@ export default function Dashboard() {
   useEffect(() => {
     async function buscarDados() {
       try {
-        const [lucroResponse, porMesResponse, porCategoriaResponse] = await Promise.all([
-          api.get('/api/dashboard/lucro'),
+        const [resumoResponse, porMesResponse, porCategoriaResponse] = await Promise.all([
+          api.get('/api/dashboard/resumo'),
           api.get('/api/dashboard/by-month'),
           api.get('/api/dashboard/by-category'),
         ])
 
-        setLucro(lucroResponse.data)
+        setResumo(resumoResponse.data)
 
         setDespesasPorMes(
           porMesResponse.data.map((item) => ({
@@ -92,7 +93,12 @@ export default function Dashboard() {
       <div>
         {cabecalho}
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <div className="bg-white rounded-lg border border-stone-200 p-5">
+            <Skeleton className="h-4 w-28 mb-2" />
+            <Skeleton className="h-8 w-32" />
+          </div>
+
           <div className="bg-white rounded-lg border border-stone-200 p-5">
             <Skeleton className="h-4 w-28 mb-2" />
             <Skeleton className="h-8 w-32" />
@@ -130,26 +136,45 @@ export default function Dashboard() {
     <div>
       {cabecalho}
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <div className="bg-white rounded-lg border border-stone-200 p-5">
-          <p className="text-sm text-stone-500 mb-1">Total de Receitas</p>
-          <p className="text-2xl font-bold text-green-600">
-            {formatarMoeda(lucro.totalReceitas)}
+          <p className="text-xs font-medium text-stone-500 uppercase tracking-wide mb-1">
+            Receitas
           </p>
+          <p className="text-2xl font-bold text-green-600 mb-1">
+            {formatarMoeda(resumo.receitas)}
+          </p>
+          <Variacao valor={resumo.variacaoReceitas} subirEBom />
         </div>
 
         <div className="bg-white rounded-lg border border-stone-200 p-5">
-          <p className="text-sm text-stone-500 mb-1">Total de Despesas</p>
-          <p className="text-2xl font-bold text-red-600">
-            {formatarMoeda(lucro.totalDespesas)}
+          <p className="text-xs font-medium text-stone-500 uppercase tracking-wide mb-1">
+            Despesas
           </p>
+          <p className="text-2xl font-bold text-red-600 mb-1">
+            {formatarMoeda(resumo.despesas)}
+          </p>
+          <Variacao valor={resumo.variacaoDespesas} subirEBom={false} />
         </div>
 
         <div className="bg-brand-50 rounded-lg border border-brand-500/20 p-5">
-          <p className="text-sm text-brand-700 mb-1">Lucro Real</p>
-          <p className="text-2xl font-bold text-brand-900">
-            {formatarMoeda(lucro.lucro)}
+          <p className="text-xs font-medium text-brand-700 uppercase tracking-wide mb-1">
+            Lucro
           </p>
+          <p className="text-2xl font-bold text-brand-900 mb-1">
+            {formatarMoeda(resumo.lucro)}
+          </p>
+          <p className="text-xs text-brand-700">Margem: {resumo.margemLucro.toFixed(1)}%</p>
+        </div>
+
+        <div className="bg-white rounded-lg border border-stone-200 p-5">
+          <p className="text-xs font-medium text-stone-500 uppercase tracking-wide mb-1">
+            Funcionários
+          </p>
+          <p className="text-2xl font-bold text-stone-900 mb-1">
+            {resumo.funcionariosAtivos} ativos
+          </p>
+          <p className="text-xs text-stone-500">Folha: {formatarMoeda(resumo.totalFolha)}</p>
         </div>
       </div>
 
