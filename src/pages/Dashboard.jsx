@@ -4,6 +4,7 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
+  Rectangle,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -13,7 +14,7 @@ import api from '../api/axios'
 import Skeleton from '../components/Skeleton'
 import Variacao from '../components/Variacao'
 import { useAuth } from '../contexts/AuthContext'
-import { formatarMoeda } from '../utils/formatadores'
+import { formatarCompacto, formatarMoeda } from '../utils/formatadores'
 import { gerarInsights } from '../utils/insights'
 
 const ICONE_INSIGHT = {
@@ -26,6 +27,31 @@ const MESES_ABREVIADOS = [
   'jan', 'fev', 'mar', 'abr', 'mai', 'jun',
   'jul', 'ago', 'set', 'out', 'nov', 'dez',
 ]
+
+const CORES_CATEGORIA = [
+  '#7A3508', '#9A4509', '#B9570A', '#CE6D1F', '#DD8845', '#E9A575', '#F0C2A3',
+]
+
+const TICK_EIXO = { fontSize: 12, fill: '#78716c' }
+
+function BarraCategoria(props) {
+  const { index, ...resto } = props
+  const cor = CORES_CATEGORIA[Math.min(index, CORES_CATEGORIA.length - 1)]
+  return <Rectangle {...resto} fill={cor} />
+}
+
+function TooltipGrafico({ active, payload, label }) {
+  if (!active || !payload?.length) return null
+
+  return (
+    <div className="bg-white border border-stone-200 rounded-lg shadow-lg p-3">
+      <p className="text-xs text-stone-500">{label}</p>
+      <p className="text-sm font-semibold text-stone-900">
+        {formatarMoeda(payload[0].value)}
+      </p>
+    </div>
+  )
+}
 
 function obterSaudacao() {
   const hora = new Date().getHours()
@@ -61,7 +87,9 @@ export default function Dashboard() {
           }))
         )
 
-        setDespesasPorCategoria(porCategoriaResponse.data)
+        setDespesasPorCategoria(
+          [...porCategoriaResponse.data].sort((a, b) => b.total - a.total)
+        )
       } catch (error) {
         setErro(error.response?.data?.message || 'Não foi possível carregar o dashboard')
       } finally {
@@ -206,33 +234,54 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div className="bg-white rounded-lg border border-stone-200 p-5">
-          <p className="text-sm font-medium text-stone-700 mb-4">Despesas por mês</p>
+          <p className="text-sm font-medium text-stone-700">Despesas por mês</p>
+          <p className="text-xs text-stone-400 mb-4">Últimos meses</p>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={despesasPorMes}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e7e5e4" />
-              <XAxis dataKey="mes" tick={{ fontSize: 12 }} />
-              <YAxis tick={{ fontSize: 12 }} />
-              <Tooltip
-                formatter={(valor) => formatarMoeda(valor)}
-                cursor={{ fill: 'transparent' }}
+              <CartesianGrid vertical={false} stroke="#f5f5f4" />
+              <XAxis
+                dataKey="mes"
+                axisLine={false}
+                tickLine={false}
+                tick={TICK_EIXO}
               />
-              <Bar dataKey="total" fill="#B9570A" radius={[4, 4, 0, 0]} />
+              <YAxis
+                axisLine={false}
+                tickLine={false}
+                tick={TICK_EIXO}
+                tickFormatter={formatarCompacto}
+              />
+              <Tooltip content={<TooltipGrafico />} cursor={{ fill: 'transparent' }} />
+              <Bar dataKey="total" fill="#B9570A" radius={[6, 6, 0, 0]} maxBarSize={48} />
             </BarChart>
           </ResponsiveContainer>
         </div>
 
         <div className="bg-white rounded-lg border border-stone-200 p-5">
-          <p className="text-sm font-medium text-stone-700 mb-4">Despesas por categoria</p>
+          <p className="text-sm font-medium text-stone-700">Despesas por categoria</p>
+          <p className="text-xs text-stone-400 mb-4">No período atual</p>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={despesasPorCategoria}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e7e5e4" />
-              <XAxis dataKey="categoriaNome" tick={{ fontSize: 12 }} />
-              <YAxis tick={{ fontSize: 12 }} />
-              <Tooltip
-                formatter={(valor) => formatarMoeda(valor)}
-                cursor={{ fill: 'transparent' }}
+              <CartesianGrid vertical={false} stroke="#f5f5f4" />
+              <XAxis
+                dataKey="categoriaNome"
+                axisLine={false}
+                tickLine={false}
+                tick={TICK_EIXO}
               />
-              <Bar dataKey="total" fill="#78716c" radius={[4, 4, 0, 0]} />
+              <YAxis
+                axisLine={false}
+                tickLine={false}
+                tick={TICK_EIXO}
+                tickFormatter={formatarCompacto}
+              />
+              <Tooltip content={<TooltipGrafico />} cursor={{ fill: 'transparent' }} />
+              <Bar
+                dataKey="total"
+                radius={[6, 6, 0, 0]}
+                maxBarSize={48}
+                shape={<BarraCategoria />}
+              />
             </BarChart>
           </ResponsiveContainer>
         </div>
