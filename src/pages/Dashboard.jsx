@@ -10,11 +10,7 @@ import {
 } from 'recharts'
 import api from '../api/axios'
 import Skeleton from '../components/Skeleton'
-
-const formatoMoeda = new Intl.NumberFormat('pt-BR', {
-  style: 'currency',
-  currency: 'BRL',
-})
+import { formatarMoeda } from '../utils/formatadores'
 
 const MESES_ABREVIADOS = [
   'jan', 'fev', 'mar', 'abr', 'mai', 'jun',
@@ -97,21 +93,21 @@ export default function Dashboard() {
         <div className="bg-white rounded-lg border border-stone-200 p-5">
           <p className="text-sm text-stone-500 mb-1">Total de Receitas</p>
           <p className="text-2xl font-bold text-green-600">
-            {formatoMoeda.format(lucro.totalReceitas)}
+            {formatarMoeda(lucro.totalReceitas)}
           </p>
         </div>
 
         <div className="bg-white rounded-lg border border-stone-200 p-5">
           <p className="text-sm text-stone-500 mb-1">Total de Despesas</p>
           <p className="text-2xl font-bold text-red-600">
-            {formatoMoeda.format(lucro.totalDespesas)}
+            {formatarMoeda(lucro.totalDespesas)}
           </p>
         </div>
 
         <div className="bg-brand-50 rounded-lg border border-brand-500/20 p-5">
           <p className="text-sm text-brand-700 mb-1">Lucro Real</p>
           <p className="text-2xl font-bold text-amber-900">
-            {formatoMoeda.format(lucro.lucro)}
+            {formatarMoeda(lucro.lucro)}
           </p>
         </div>
       </div>
@@ -125,7 +121,7 @@ export default function Dashboard() {
               <XAxis dataKey="mes" tick={{ fontSize: 12 }} />
               <YAxis tick={{ fontSize: 12 }} />
               <Tooltip
-                formatter={(valor) => formatoMoeda.format(valor)}
+                formatter={(valor) => formatarMoeda(valor)}
                 cursor={{ fill: 'transparent' }}
               />
               <Bar dataKey="total" fill="#B9570A" radius={[4, 4, 0, 0]} />
@@ -141,7 +137,7 @@ export default function Dashboard() {
               <XAxis dataKey="categoriaNome" tick={{ fontSize: 12 }} />
               <YAxis tick={{ fontSize: 12 }} />
               <Tooltip
-                formatter={(valor) => formatoMoeda.format(valor)}
+                formatter={(valor) => formatarMoeda(valor)}
                 cursor={{ fill: 'transparent' }}
               />
               <Bar dataKey="total" fill="#78716c" radius={[4, 4, 0, 0]} />

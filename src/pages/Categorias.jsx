@@ -90,7 +90,19 @@ export default function Categorias() {
 
   const colunas = [
     { chave: 'nome', titulo: 'Nome' },
-    { chave: 'tipo', titulo: 'Tipo' },
+    {
+      chave: 'tipo',
+      titulo: 'Tipo',
+      render: (categoria) => (
+        <span
+          className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium ${
+            categoria.tipo === 'RECEITA' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'
+          }`}
+        >
+          {categoria.tipo}
+        </span>
+      ),
+    },
     { chave: 'descricao', titulo: 'Descrição' },
     {
       chave: 'acoes',

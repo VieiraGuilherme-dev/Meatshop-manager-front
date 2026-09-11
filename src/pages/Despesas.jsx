@@ -8,6 +8,7 @@ import ConfirmarExclusao from '../components/ConfirmarExclusao'
 import { useToast } from '../contexts/ToastContext'
 import { useAuth } from '../contexts/AuthContext'
 import { useCrud } from '../hooks/useCrud'
+import { formatarMoeda, formatarData } from '../utils/formatadores'
 
 const formInicial = { description: '', categoriaId: '', funcionarioId: '', amount: '', expenseDate: '' }
 
@@ -133,8 +134,16 @@ export default function Despesas() {
 
   const colunas = [
     { chave: 'description', titulo: 'Descrição' },
-    { chave: 'amount', titulo: 'Valor' },
-    { chave: 'expenseDate', titulo: 'Data' },
+    {
+      chave: 'amount',
+      titulo: 'Valor',
+      render: (despesa) => formatarMoeda(despesa.amount),
+    },
+    {
+      chave: 'expenseDate',
+      titulo: 'Data',
+      render: (despesa) => formatarData(despesa.expenseDate),
+    },
     { chave: 'categoria', titulo: 'Categoria', render: nomeCategoria },
     { chave: 'funcionario', titulo: 'Funcionário', render: nomeFuncionario },
     {

@@ -8,6 +8,7 @@ import ConfirmarExclusao from '../components/ConfirmarExclusao'
 import { useToast } from '../contexts/ToastContext'
 import { useAuth } from '../contexts/AuthContext'
 import { useCrud } from '../hooks/useCrud'
+import { formatarMoeda, formatarData } from '../utils/formatadores'
 
 const formInicial = { descricao: '', valor: '', data: '', categoriaId: '' }
 
@@ -114,8 +115,16 @@ export default function Receitas() {
 
   const colunas = [
     { chave: 'descricao', titulo: 'Descrição' },
-    { chave: 'valor', titulo: 'Valor' },
-    { chave: 'data', titulo: 'Data' },
+    {
+      chave: 'valor',
+      titulo: 'Valor',
+      render: (receita) => formatarMoeda(receita.valor),
+    },
+    {
+      chave: 'data',
+      titulo: 'Data',
+      render: (receita) => formatarData(receita.data),
+    },
     { chave: 'categoria', titulo: 'Categoria', render: nomeCategoria },
     {
       chave: 'acoes',

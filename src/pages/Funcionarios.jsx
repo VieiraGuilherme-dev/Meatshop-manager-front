@@ -8,6 +8,7 @@ import ConfirmarExclusao from '../components/ConfirmarExclusao'
 import { useToast } from '../contexts/ToastContext'
 import { useAuth } from '../contexts/AuthContext'
 import { useCrud } from '../hooks/useCrud'
+import { formatarMoeda, formatarData } from '../utils/formatadores'
 
 const formInicial = {
   nome: '',
@@ -136,13 +137,36 @@ export default function Funcionarios() {
   const colunas = [
     { chave: 'nome', titulo: 'Nome' },
     { chave: 'cargo', titulo: 'Cargo' },
-    { chave: 'salario', titulo: 'Salário' },
-    { chave: 'dataAdmissao', titulo: 'Admissão' },
-    { chave: 'dataDemissao', titulo: 'Demissão' },
+    {
+      chave: 'salario',
+      titulo: 'Salário',
+      render: (funcionario) => formatarMoeda(funcionario.salario),
+    },
+    {
+      chave: 'dataAdmissao',
+      titulo: 'Admissão',
+      render: (funcionario) => formatarData(funcionario.dataAdmissao),
+    },
+    {
+      chave: 'dataDemissao',
+      titulo: 'Demissão',
+      render: (funcionario) => formatarData(funcionario.dataDemissao),
+    },
     {
       chave: 'ativo',
       titulo: 'Ativo',
-      render: (funcionario) => (funcionario.ativo ? 'Sim' : 'Não'),
+      render: (funcionario) =>
+        funcionario.ativo ? (
+          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium bg-green-50 text-green-700">
+            <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
+            Ativo
+          </span>
+        ) : (
+          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium bg-stone-100 text-stone-600">
+            <span className="w-1.5 h-1.5 rounded-full bg-stone-400" />
+            Desligado
+          </span>
+        ),
     },
     {
       chave: 'acoes',
