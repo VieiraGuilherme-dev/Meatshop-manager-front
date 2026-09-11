@@ -10,6 +10,7 @@ import {
 } from 'recharts'
 import api from '../api/axios'
 import Skeleton from '../components/Skeleton'
+import { useAuth } from '../contexts/AuthContext'
 import { formatarMoeda } from '../utils/formatadores'
 
 const MESES_ABREVIADOS = [
@@ -17,7 +18,16 @@ const MESES_ABREVIADOS = [
   'jul', 'ago', 'set', 'out', 'nov', 'dez',
 ]
 
+function obterSaudacao() {
+  const hora = new Date().getHours()
+  if (hora < 12) return 'Bom dia'
+  if (hora < 18) return 'Boa tarde'
+  return 'Boa noite'
+}
+
 export default function Dashboard() {
+  const { usuario } = useAuth()
+  const nomeUsuario = usuario?.split('@')[0] ?? ''
   const [lucro, setLucro] = useState(null)
   const [despesasPorMes, setDespesasPorMes] = useState([])
   const [despesasPorCategoria, setDespesasPorCategoria] = useState([])
@@ -53,10 +63,19 @@ export default function Dashboard() {
     buscarDados()
   }, [])
 
+  const cabecalho = (
+    <div className="mb-6">
+      <h1 className="text-2xl font-bold text-stone-900">Visão geral</h1>
+      <p className="text-sm text-stone-500 mt-1">
+        {obterSaudacao()}, {nomeUsuario}. Aqui está o resumo financeiro do seu açougue.
+      </p>
+    </div>
+  )
+
   if (carregando) {
     return (
       <div>
-        <h1 className="text-2xl font-bold text-stone-900 mb-6">Dashboard</h1>
+        {cabecalho}
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
           <div className="bg-white rounded-lg border border-stone-200 p-5">
@@ -83,11 +102,18 @@ export default function Dashboard() {
     )
   }
 
-  if (erro) return <p className="text-sm text-red-600">{erro}</p>
+  if (erro) {
+    return (
+      <div>
+        {cabecalho}
+        <p className="text-sm text-red-600">{erro}</p>
+      </div>
+    )
+  }
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-stone-900 mb-6">Dashboard</h1>
+      {cabecalho}
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
         <div className="bg-white rounded-lg border border-stone-200 p-5">

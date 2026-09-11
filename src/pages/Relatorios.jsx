@@ -53,38 +53,48 @@ export default function Relatorios() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-stone-900 mb-6">Relatórios</h1>
+      <h1 className="text-2xl font-bold text-stone-900">Relatório financeiro</h1>
+      <p className="text-sm text-stone-500 mt-1 mb-6">
+        Selecione um período e exporte o resumo de receitas e despesas do seu açougue.
+      </p>
 
-      <div className="bg-white rounded-lg border border-stone-200 p-6 max-w-md">
-        <p className="text-sm text-stone-500 mb-5">
-          Selecione o período para exportar o relatório financeiro. Deixe em branco
-          para incluir todo o histórico.
-        </p>
+      <div className="max-w-2xl flex flex-col gap-4">
+        <div className="bg-white rounded-lg border border-stone-200 p-6">
+          <p className="text-sm font-medium text-stone-700 mb-4">Período</p>
 
-        <div className="flex flex-col gap-4">
-          <div>
-            <label className="block text-sm text-stone-600 mb-1">Data início</label>
-            <input
-              type="date"
-              value={dataInicio}
-              onChange={(e) => setDataInicio(e.target.value)}
-              className="w-full border border-stone-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm text-stone-600 mb-1">Data início</label>
+              <input
+                type="date"
+                value={dataInicio}
+                onChange={(e) => setDataInicio(e.target.value)}
+                className="w-full border border-stone-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm text-stone-600 mb-1">Data fim</label>
+              <input
+                type="date"
+                value={dataFim}
+                onChange={(e) => setDataFim(e.target.value)}
+                className="w-full border border-stone-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+              />
+            </div>
           </div>
 
-          <div>
-            <label className="block text-sm text-stone-600 mb-1">Data fim</label>
-            <input
-              type="date"
-              value={dataFim}
-              onChange={(e) => setDataFim(e.target.value)}
-              className="w-full border border-stone-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
-            />
-          </div>
+          <p className="text-sm text-stone-500 mt-3">
+            Deixe em branco para incluir todo o histórico.
+          </p>
+        </div>
 
-          {erro && <p className="text-sm text-red-600">{erro}</p>}
+        <div className="bg-white rounded-lg border border-stone-200 p-6">
+          <p className="text-sm font-medium text-stone-700 mb-4">Exportar</p>
 
-          <div className="flex gap-3 mt-2">
+          {erro && <p className="text-sm text-red-600 mb-4">{erro}</p>}
+
+          <div className="flex gap-3">
             <button
               onClick={exportarPdf}
               disabled={baixandoPdf}
@@ -101,6 +111,10 @@ export default function Relatorios() {
               {baixandoExcel ? 'Exportando...' : 'Exportar Excel'}
             </button>
           </div>
+
+          <p className="text-sm text-stone-500 mt-4">
+            PDF para leitura e impressão, Excel para análise em planilha.
+          </p>
         </div>
       </div>
     </div>
