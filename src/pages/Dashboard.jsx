@@ -1,10 +1,25 @@
-import { useEffect, useState } from 'react'
-import { AlertTriangle, Calendar, Info, TrendingUp } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
+  AlertTriangle,
+  Calendar,
+  ChevronDown,
+  Info,
+  Lightbulb,
+  Plus,
+  Receipt,
+  TrendingDown,
+  TrendingUp,
+  Users,
+  Wallet,
+} from 'lucide-react'
+import {
+  Area,
+  AreaChart,
   Bar,
   BarChart,
   CartesianGrid,
-  Rectangle,
+  Cell,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -12,7 +27,6 @@ import {
 } from 'recharts'
 import api from '../api/axios'
 import Skeleton from '../components/Skeleton'
-import Variacao from '../components/Variacao'
 import { useAuth } from '../contexts/AuthContext'
 import { formatarCompacto, formatarMoeda } from '../utils/formatadores'
 import { gerarInsights } from '../utils/insights'
@@ -28,24 +42,32 @@ const MESES_ABREVIADOS = [
   'jul', 'ago', 'set', 'out', 'nov', 'dez',
 ]
 
+const MESES_COMPLETOS = [
+  'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+  'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro',
+]
+
 const CORES_CATEGORIA = [
-  '#7A3508', '#9A4509', '#B9570A', '#CE6D1F', '#DD8845', '#E9A575', '#F0C2A3',
+  '#6B2D06', '#8B3F08', '#A94E09', '#C2621A', '#D4813F', '#E5A272', '#F0C3A4',
 ]
 
 const TICK_EIXO = { fontSize: 12, fill: '#78716c' }
 
-function BarraCategoria(props) {
-  const { index, ...resto } = props
-  const cor = CORES_CATEGORIA[Math.min(index, CORES_CATEGORIA.length - 1)]
-  return <Rectangle {...resto} fill={cor} />
+function obterSaudacao() {
+  const hora = new Date().getHours()
+  if (hora < 12) return 'Bom dia'
+  if (hora < 18) return 'Boa tarde'
+  return 'Boa noite'
 }
 
-function TooltipGrafico({ active, payload, label }) {
+function TooltipGrafico({ active, payload, label, formatarRotulo }) {
   if (!active || !payload?.length) return null
+
+  const rotulo = formatarRotulo ? formatarRotulo(payload[0].payload) : label
 
   return (
     <div className="bg-white border border-stone-200 rounded-lg shadow-lg p-3">
-      <p className="text-xs text-stone-500">{label}</p>
+      <p className="text-xs text-stone-500">{rotulo}</p>
       <p className="text-sm font-semibold text-stone-900">
         {formatarMoeda(payload[0].value)}
       </p>
@@ -53,11 +75,151 @@ function TooltipGrafico({ active, payload, label }) {
   )
 }
 
-function obterSaudacao() {
-  const hora = new Date().getHours()
-  if (hora < 12) return 'Bom dia'
-  if (hora < 18) return 'Boa tarde'
-  return 'Boa noite'
+function TickCategoria({ x, y, payload, dados }) {
+  const item = dados.find((entrada) => entrada.categoriaNome === payload.value)
+
+  return (
+    <g transform={`translate(${x},${y})`}>
+      <text dy={14} textAnchor="middle" fontSize={12} fill="#78716c">
+        {payload.value}
+      </text>
+      <text dy={30} textAnchor="middle" fontSize={11} fill="#a8a29e">
+        {item ? formatarCompacto(item.total) : ''}
+      </text>
+    </g>
+  )
+}
+
+function VariacaoInline({ valor, bomQuandoSobe }) {
+  if (valor == null) return null
+
+  const subiu = valor >= 0
+  const favoravel = subiu === bomQuandoSobe
+  const Icone = subiu ? TrendingUp : TrendingDown
+  const percentual = Math.abs(valor).toLocaleString('pt-BR', {
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+  })
+
+  return (
+    <p className={`flex items-center gap-1 text-xs mt-2 ${favoravel ? 'text-green-600' : 'text-red-600'}`}>
+      <Icone size={14} />
+      {percentual}% vs. mês anterior
+    </p>
+  )
+}
+
+function SparklineDespesas({ dados }) {
+  return (
+    <div style={{ width: 110, height: 48 }} className="shrink-0">
+      <ResponsiveContainer width="100%" height="100%">
+        <AreaChart data={dados}>
+          <defs>
+            <linearGradient id="gradienteSparklineDespesas" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#dc2626" stopOpacity={0.35} />
+              <stop offset="100%" stopColor="#dc2626" stopOpacity={0} />
+            </linearGradient>
+          </defs>
+          <Area
+            type="monotone"
+            dataKey="total"
+            stroke="#dc2626"
+            strokeWidth={1.5}
+            fill="url(#gradienteSparklineDespesas)"
+            dot={false}
+          />
+        </AreaChart>
+      </ResponsiveContainer>
+    </div>
+  )
+}
+
+function CardKpi({
+  icone: Icone,
+  corIcone,
+  rotulo,
+  valor,
+  corValor,
+  corFundo = 'bg-white',
+  corBorda = 'border-stone-200',
+  rodape,
+  extra,
+}) {
+  return (
+    <div className={`rounded-xl border ${corBorda} ${corFundo} p-5`}>
+      <div className="flex items-center gap-2 mb-3">
+        <span className={`flex items-center justify-center w-9 h-9 rounded-full shrink-0 ${corIcone}`}>
+          <Icone size={18} className="text-white" />
+        </span>
+        <div>
+          <p className="text-xs font-medium text-stone-500 uppercase tracking-wide">{rotulo}</p>
+          <p className="text-[11px] text-stone-400">No período atual</p>
+        </div>
+      </div>
+
+      <div className="flex items-end justify-between gap-2">
+        <p className={`text-[26px] font-bold leading-none ${corValor}`}>{valor}</p>
+        {extra}
+      </div>
+
+      {rodape}
+    </div>
+  )
+}
+
+function BotaoNovaMovimentacao() {
+  const navigate = useNavigate()
+  const [aberto, setAberto] = useState(false)
+  const containerRef = useRef(null)
+
+  useEffect(() => {
+    if (!aberto) return
+
+    function aoClicarFora(evento) {
+      if (containerRef.current && !containerRef.current.contains(evento.target)) {
+        setAberto(false)
+      }
+    }
+
+    document.addEventListener('mousedown', aoClicarFora)
+    return () => document.removeEventListener('mousedown', aoClicarFora)
+  }, [aberto])
+
+  return (
+    <div className="relative shrink-0" ref={containerRef}>
+      <button
+        onClick={() => setAberto((valor) => !valor)}
+        className="flex items-center gap-2 bg-brand-600 text-white rounded-lg px-4 py-2.5 text-sm font-medium hover:bg-brand-700 transition-colors"
+      >
+        <Plus size={16} />
+        Nova movimentação
+        <ChevronDown size={16} />
+      </button>
+
+      {aberto && (
+        <div className="absolute right-0 mt-2 w-44 bg-white border border-stone-200 rounded-lg shadow-lg py-1 z-10">
+          <button
+            onClick={() => {
+              setAberto(false)
+              navigate('/receitas')
+            }}
+            className="w-full text-left px-4 py-2 text-sm text-stone-700 hover:bg-stone-50 transition-colors"
+          >
+            Nova receita
+          </button>
+          <button
+            onClick={() => {
+              setAberto(false)
+              navigate('/despesas')
+            }}
+            className="w-full text-left px-4 py-2 text-sm text-stone-700 hover:bg-stone-50 transition-colors"
+          >
+            Nova despesa
+          </button>
+        </div>
+      )}
+    </div>
+  )
 }
 
 export default function Dashboard() {
@@ -84,6 +246,7 @@ export default function Dashboard() {
           porMesResponse.data.map((item) => ({
             ...item,
             mes: MESES_ABREVIADOS[item.month - 1],
+            mesCompleto: `${MESES_COMPLETOS[item.month - 1]}/${item.year ?? new Date().getFullYear()}`,
           }))
         )
 
@@ -108,17 +271,21 @@ export default function Dashboard() {
   })
 
   const cabecalho = (
-    <div className="flex flex-col sm:flex-row items-start justify-between mb-8">
-      <div>
-        <h1 className="text-2xl font-bold text-stone-900">Visão geral</h1>
-        <p className="text-sm text-stone-500 mt-1">
-          {obterSaudacao()}, {nomeUsuario}. Aqui está o resumo financeiro do seu açougue.
-        </p>
-      </div>
-
-      <div className="flex items-center gap-2 text-sm text-stone-500">
+    <div className="mb-8">
+      <div className="flex justify-end items-center gap-2 text-sm text-stone-500 mb-4">
         <Calendar size={16} />
         <span>{dataHoje}</span>
+      </div>
+
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-[32px] font-bold text-stone-900">Dashboard</h1>
+          <p className="text-sm text-stone-500 mt-1">
+            {obterSaudacao()}, {nomeUsuario}. Aqui está o resumo financeiro do seu açougue.
+          </p>
+        </div>
+
+        <BotaoNovaMovimentacao />
       </div>
     </div>
   )
@@ -129,30 +296,26 @@ export default function Dashboard() {
         {cabecalho}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <div className="bg-white rounded-lg border border-stone-200 p-5">
-            <Skeleton className="h-4 w-28 mb-2" />
-            <Skeleton className="h-8 w-32" />
-          </div>
-
-          <div className="bg-white rounded-lg border border-stone-200 p-5">
-            <Skeleton className="h-4 w-28 mb-2" />
-            <Skeleton className="h-8 w-32" />
-          </div>
-
-          <div className="bg-white rounded-lg border border-stone-200 p-5">
-            <Skeleton className="h-4 w-28 mb-2" />
-            <Skeleton className="h-8 w-32" />
-          </div>
-
-          <div className="bg-white rounded-lg border border-stone-200 p-5">
-            <Skeleton className="h-4 w-28 mb-2" />
-            <Skeleton className="h-8 w-32" />
-          </div>
+          {[0, 1, 2, 3].map((indice) => (
+            <div key={indice} className="rounded-xl border border-stone-200 bg-white p-5">
+              <div className="flex items-center gap-2 mb-3">
+                <Skeleton className="h-9 w-9 rounded-full" />
+                <div className="flex-1">
+                  <Skeleton className="h-3 w-20 mb-1" />
+                  <Skeleton className="h-3 w-24" />
+                </div>
+              </div>
+              <Skeleton className="h-7 w-28 mb-2" />
+              <Skeleton className="h-3 w-32" />
+            </div>
+          ))}
         </div>
 
+        <Skeleton className="h-16 w-full rounded-xl mb-8" />
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <Skeleton className="h-[300px] w-full" />
-          <Skeleton className="h-[300px] w-full" />
+          <Skeleton className="h-[360px] w-full" />
+          <Skeleton className="h-[360px] w-full" />
         </div>
       </div>
     )
@@ -174,55 +337,62 @@ export default function Dashboard() {
       {cabecalho}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <div className="bg-white rounded-lg border border-stone-200 p-5">
-          <p className="text-xs font-medium text-stone-500 uppercase tracking-wide mb-1">
-            Receitas
-          </p>
-          <p className="text-2xl font-bold text-green-600 mb-1">
-            {formatarMoeda(resumo.receitas)}
-          </p>
-          <Variacao valor={resumo.variacaoReceitas} subirEBom />
-        </div>
+        <CardKpi
+          icone={Wallet}
+          corIcone="bg-green-500"
+          rotulo="Receitas"
+          valor={formatarMoeda(resumo.receitas)}
+          corValor="text-green-600"
+          rodape={<VariacaoInline valor={resumo.variacaoReceitas} bomQuandoSobe />}
+        />
 
-        <div className="bg-white rounded-lg border border-stone-200 p-5">
-          <p className="text-xs font-medium text-stone-500 uppercase tracking-wide mb-1">
-            Despesas
-          </p>
-          <p className="text-2xl font-bold text-red-600 mb-1">
-            {formatarMoeda(resumo.despesas)}
-          </p>
-          <Variacao valor={resumo.variacaoDespesas} subirEBom={false} />
-        </div>
+        <CardKpi
+          icone={Receipt}
+          corIcone="bg-red-500"
+          rotulo="Despesas"
+          valor={formatarMoeda(resumo.despesas)}
+          corValor="text-red-600"
+          rodape={<VariacaoInline valor={resumo.variacaoDespesas} bomQuandoSobe={false} />}
+          extra={<SparklineDespesas dados={despesasPorMes} />}
+        />
 
-        <div className="bg-brand-50 rounded-lg border border-brand-500/20 p-5">
-          <p className="text-xs font-medium text-brand-700 uppercase tracking-wide mb-1">
-            Lucro
-          </p>
-          <p className="text-2xl font-bold text-brand-900 mb-1">
-            {formatarMoeda(resumo.lucro)}
-          </p>
-          <p className="text-xs text-brand-700">Margem: {resumo.margemLucro.toFixed(1)}%</p>
-        </div>
+        <CardKpi
+          icone={TrendingUp}
+          corIcone="bg-brand-600"
+          rotulo="Lucro"
+          valor={formatarMoeda(resumo.lucro)}
+          corValor="text-brand-900"
+          corFundo="bg-brand-50"
+          corBorda="border-brand-500/20"
+          rodape={
+            <p className="text-xs text-brand-700 mt-2">Margem: {resumo.margemLucro.toFixed(1)}%</p>
+          }
+        />
 
-        <div className="bg-white rounded-lg border border-stone-200 p-5">
-          <p className="text-xs font-medium text-stone-500 uppercase tracking-wide mb-1">
-            Funcionários
-          </p>
-          <p className="text-2xl font-bold text-stone-900 mb-1">
-            {resumo.funcionariosAtivos} ativos
-          </p>
-          <p className="text-xs text-stone-500">Folha: {formatarMoeda(resumo.totalFolha)}</p>
-        </div>
+        <CardKpi
+          icone={Users}
+          corIcone="bg-indigo-400"
+          rotulo="Funcionários"
+          valor={`${resumo.funcionariosAtivos} ativos`}
+          corValor="text-stone-900"
+          rodape={
+            <p className="text-xs text-stone-500 mt-2">Folha: {formatarMoeda(resumo.totalFolha)}</p>
+          }
+        />
       </div>
 
       {insights.length > 0 && (
-        <div className="bg-white rounded-lg border border-stone-200 p-5 mb-8">
-          <p className="text-sm font-medium text-stone-700 mb-3">Insights</p>
-          <div className="flex flex-col gap-2">
+        <div className="flex flex-col sm:flex-row bg-amber-50 border border-amber-200 rounded-xl mb-8 overflow-hidden">
+          <div className="flex items-center gap-2 px-5 py-4 sm:border-r sm:border-amber-200">
+            <Lightbulb size={18} className="text-amber-600 shrink-0" />
+            <span className="font-semibold text-stone-800 whitespace-nowrap">Insights</span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-amber-200 flex-1">
             {insights.map((insight, indice) => {
               const { Icone, cor } = ICONE_INSIGHT[insight.tipo]
               return (
-                <div key={indice} className="flex items-start gap-2 text-sm text-stone-600">
+                <div key={indice} className="flex items-start gap-2 px-5 py-4 text-sm text-stone-700">
                   <Icone size={16} className={`shrink-0 mt-0.5 ${cor}`} />
                   <span>{insight.texto}</span>
                 </div>
@@ -234,40 +404,51 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div className="bg-white rounded-lg border border-stone-200 p-5">
-          <p className="text-sm font-medium text-stone-700">Despesas por mês</p>
+          <p className="text-base font-semibold text-stone-700">Despesas por mês</p>
           <p className="text-xs text-stone-400 mb-4">Últimos meses</p>
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={320}>
             <BarChart data={despesasPorMes}>
+              <defs>
+                <linearGradient id="gradienteDespesasMes" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#A94E09" />
+                  <stop offset="100%" stopColor="#D4813F" />
+                </linearGradient>
+              </defs>
               <CartesianGrid vertical={false} stroke="#f5f5f4" />
-              <XAxis
-                dataKey="mes"
-                axisLine={false}
-                tickLine={false}
-                tick={TICK_EIXO}
-              />
+              <XAxis dataKey="mes" axisLine={false} tickLine={false} tick={TICK_EIXO} />
               <YAxis
                 axisLine={false}
                 tickLine={false}
                 tick={TICK_EIXO}
                 tickFormatter={formatarCompacto}
               />
-              <Tooltip content={<TooltipGrafico />} cursor={{ fill: 'transparent' }} />
-              <Bar dataKey="total" fill="#B9570A" radius={[6, 6, 0, 0]} maxBarSize={48} />
+              <Tooltip
+                content={<TooltipGrafico formatarRotulo={(item) => item.mesCompleto} />}
+                cursor={{ fill: '#f5f5f4' }}
+              />
+              <Bar
+                dataKey="total"
+                fill="url(#gradienteDespesasMes)"
+                radius={[8, 8, 0, 0]}
+                maxBarSize={56}
+              />
             </BarChart>
           </ResponsiveContainer>
         </div>
 
         <div className="bg-white rounded-lg border border-stone-200 p-5">
-          <p className="text-sm font-medium text-stone-700">Despesas por categoria</p>
+          <p className="text-base font-semibold text-stone-700">Despesas por categoria</p>
           <p className="text-xs text-stone-400 mb-4">No período atual</p>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={despesasPorCategoria}>
+          <ResponsiveContainer width="100%" height={320}>
+            <BarChart data={despesasPorCategoria} margin={{ bottom: 8 }}>
               <CartesianGrid vertical={false} stroke="#f5f5f4" />
               <XAxis
                 dataKey="categoriaNome"
+                interval={0}
+                height={48}
                 axisLine={false}
                 tickLine={false}
-                tick={TICK_EIXO}
+                tick={<TickCategoria dados={despesasPorCategoria} />}
               />
               <YAxis
                 axisLine={false}
@@ -275,13 +456,15 @@ export default function Dashboard() {
                 tick={TICK_EIXO}
                 tickFormatter={formatarCompacto}
               />
-              <Tooltip content={<TooltipGrafico />} cursor={{ fill: 'transparent' }} />
-              <Bar
-                dataKey="total"
-                radius={[6, 6, 0, 0]}
-                maxBarSize={48}
-                shape={<BarraCategoria />}
-              />
+              <Tooltip content={<TooltipGrafico />} cursor={{ fill: '#f5f5f4' }} />
+              <Bar dataKey="total" radius={[6, 6, 0, 0]} maxBarSize={48}>
+                {despesasPorCategoria.map((entrada, indice) => (
+                  <Cell
+                    key={entrada.categoriaNome}
+                    fill={CORES_CATEGORIA[Math.min(indice, CORES_CATEGORIA.length - 1)]}
+                  />
+                ))}
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>
