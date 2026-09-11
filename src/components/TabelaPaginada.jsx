@@ -6,7 +6,8 @@ export default function TabelaPaginada({
   pagina,
   totalPaginas,
   onMudarPagina,
-  mensagemVazia = 'Nenhum registro encontrado',
+  tituloVazio = 'Nenhum registro encontrado',
+  descricaoVazia,
   acaoVazia,
 }) {
   return (
@@ -29,10 +30,13 @@ export default function TabelaPaginada({
             {dados.length === 0 && (
               <tr>
                 <td colSpan={colunas.length} className="py-12">
-                  <div className="flex flex-col items-center justify-center gap-2 text-center">
-                    <Inbox size={40} className="text-stone-300" />
-                    <p className="text-sm text-stone-500">{mensagemVazia}</p>
-                    {acaoVazia && <div className="mt-2">{acaoVazia}</div>}
+                  <div className="flex flex-col items-center justify-center gap-1 text-center">
+                    <Inbox size={48} className="text-stone-300 mb-2" />
+                    <p className="text-base font-medium text-stone-700">{tituloVazio}</p>
+                    {descricaoVazia && (
+                      <p className="text-sm text-stone-500 max-w-xs">{descricaoVazia}</p>
+                    )}
+                    {acaoVazia && <div className="mt-4">{acaoVazia}</div>}
                   </div>
                 </td>
               </tr>

@@ -4,6 +4,7 @@ import Modal from '../components/Modal'
 import TabelaPaginada from '../components/TabelaPaginada'
 import Skeleton from '../components/Skeleton'
 import ConfirmarExclusao from '../components/ConfirmarExclusao'
+import MenuAcoes from '../components/MenuAcoes'
 import { useToast } from '../contexts/ToastContext'
 import { useAuth } from '../contexts/AuthContext'
 import { useCrud } from '../hooks/useCrud'
@@ -109,22 +110,17 @@ export default function Categorias() {
       titulo: 'Ações',
       render: (categoria) =>
         podeGerenciar && (
-          <div className="flex gap-2">
-            <button
-              onClick={() => abrirEdicao(categoria)}
-              title="Editar"
-              className="text-stone-600 hover:text-stone-900"
-            >
-              <Pencil size={16} />
-            </button>
-            <button
-              onClick={() => setCategoriaExcluindo(categoria)}
-              title="Excluir"
-              className="text-red-600 hover:text-red-800"
-            >
-              <Trash2 size={16} />
-            </button>
-          </div>
+          <MenuAcoes
+            itens={[
+              { label: 'Editar', icon: Pencil, onClick: () => abrirEdicao(categoria) },
+              {
+                label: 'Excluir',
+                icon: Trash2,
+                onClick: () => setCategoriaExcluindo(categoria),
+                destrutivo: true,
+              },
+            ]}
+          />
         ),
     },
   ]
@@ -171,7 +167,8 @@ export default function Categorias() {
         pagina={pagina}
         totalPaginas={totalPaginas}
         onMudarPagina={setPagina}
-        mensagemVazia="Nenhuma categoria cadastrada"
+        tituloVazio="Nenhuma categoria ainda"
+        descricaoVazia="Cadastre categorias para organizar receitas e despesas."
         acaoVazia={
           podeGerenciar && (
             <button

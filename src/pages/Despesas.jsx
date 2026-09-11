@@ -5,6 +5,7 @@ import Modal from '../components/Modal'
 import TabelaPaginada from '../components/TabelaPaginada'
 import Skeleton from '../components/Skeleton'
 import ConfirmarExclusao from '../components/ConfirmarExclusao'
+import MenuAcoes from '../components/MenuAcoes'
 import { useToast } from '../contexts/ToastContext'
 import { useAuth } from '../contexts/AuthContext'
 import { useCrud } from '../hooks/useCrud'
@@ -151,22 +152,17 @@ export default function Despesas() {
       titulo: 'Ações',
       render: (despesa) =>
         podeGerenciar && (
-          <div className="flex gap-2">
-            <button
-              onClick={() => abrirEdicao(despesa)}
-              title="Editar"
-              className="text-stone-600 hover:text-stone-900"
-            >
-              <Pencil size={16} />
-            </button>
-            <button
-              onClick={() => setDespesaExcluindo(despesa)}
-              title="Excluir"
-              className="text-red-600 hover:text-red-800"
-            >
-              <Trash2 size={16} />
-            </button>
-          </div>
+          <MenuAcoes
+            itens={[
+              { label: 'Editar', icon: Pencil, onClick: () => abrirEdicao(despesa) },
+              {
+                label: 'Excluir',
+                icon: Trash2,
+                onClick: () => setDespesaExcluindo(despesa),
+                destrutivo: true,
+              },
+            ]}
+          />
         ),
     },
   ]
@@ -213,7 +209,8 @@ export default function Despesas() {
         pagina={pagina}
         totalPaginas={totalPaginas}
         onMudarPagina={setPagina}
-        mensagemVazia="Nenhuma despesa cadastrada"
+        tituloVazio="Nenhuma despesa ainda"
+        descricaoVazia="Registre sua primeira despesa para acompanhar os custos do açougue."
         acaoVazia={
           podeGerenciar && (
             <button

@@ -5,6 +5,7 @@ import Modal from '../components/Modal'
 import TabelaPaginada from '../components/TabelaPaginada'
 import Skeleton from '../components/Skeleton'
 import ConfirmarExclusao from '../components/ConfirmarExclusao'
+import MenuAcoes from '../components/MenuAcoes'
 import { useToast } from '../contexts/ToastContext'
 import { useAuth } from '../contexts/AuthContext'
 import { useCrud } from '../hooks/useCrud'
@@ -173,31 +174,20 @@ export default function Funcionarios() {
       titulo: 'Ações',
       render: (funcionario) =>
         podeGerenciar && (
-          <div className="flex gap-2">
-            <button
-              onClick={() => abrirEdicao(funcionario)}
-              title="Editar"
-              className="text-stone-600 hover:text-stone-900"
-            >
-              <Pencil size={16} />
-            </button>
-            <button
-              onClick={() => setFuncionarioExcluindo(funcionario)}
-              title="Excluir"
-              className="text-red-600 hover:text-red-800"
-            >
-              <Trash2 size={16} />
-            </button>
-            {funcionario.ativo && (
-              <button
-                onClick={() => abrirDemissao(funcionario)}
-                title="Demitir"
-                className="text-brand-700 hover:text-amber-900"
-              >
-                <UserMinus size={16} />
-              </button>
-            )}
-          </div>
+          <MenuAcoes
+            itens={[
+              { label: 'Editar', icon: Pencil, onClick: () => abrirEdicao(funcionario) },
+              {
+                label: 'Excluir',
+                icon: Trash2,
+                onClick: () => setFuncionarioExcluindo(funcionario),
+                destrutivo: true,
+              },
+              ...(funcionario.ativo
+                ? [{ label: 'Demitir', icon: UserMinus, onClick: () => abrirDemissao(funcionario) }]
+                : []),
+            ]}
+          />
         ),
     },
   ]
@@ -244,7 +234,8 @@ export default function Funcionarios() {
         pagina={pagina}
         totalPaginas={totalPaginas}
         onMudarPagina={setPagina}
-        mensagemVazia="Nenhum funcionário cadastrado"
+        tituloVazio="Nenhum funcionário ainda"
+        descricaoVazia="Adicione funcionários para gerenciar a equipe do seu açougue."
         acaoVazia={
           podeGerenciar && (
             <button
