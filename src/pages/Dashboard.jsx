@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Calendar } from 'lucide-react'
+import { AlertTriangle, Calendar, Info, TrendingUp } from 'lucide-react'
 import {
   Bar,
   BarChart,
@@ -14,6 +14,13 @@ import Skeleton from '../components/Skeleton'
 import Variacao from '../components/Variacao'
 import { useAuth } from '../contexts/AuthContext'
 import { formatarMoeda } from '../utils/formatadores'
+import { gerarInsights } from '../utils/insights'
+
+const ICONE_INSIGHT = {
+  alerta: { Icone: AlertTriangle, cor: 'text-amber-600' },
+  positivo: { Icone: TrendingUp, cor: 'text-green-600' },
+  neutro: { Icone: Info, cor: 'text-stone-400' },
+}
 
 const MESES_ABREVIADOS = [
   'jan', 'fev', 'mar', 'abr', 'mai', 'jun',
@@ -132,6 +139,8 @@ export default function Dashboard() {
     )
   }
 
+  const insights = gerarInsights(resumo)
+
   return (
     <div>
       {cabecalho}
@@ -177,6 +186,23 @@ export default function Dashboard() {
           <p className="text-xs text-stone-500">Folha: {formatarMoeda(resumo.totalFolha)}</p>
         </div>
       </div>
+
+      {insights.length > 0 && (
+        <div className="bg-white rounded-lg border border-stone-200 p-5 mb-8">
+          <p className="text-sm font-medium text-stone-700 mb-3">Insights</p>
+          <div className="flex flex-col gap-2">
+            {insights.map((insight, indice) => {
+              const { Icone, cor } = ICONE_INSIGHT[insight.tipo]
+              return (
+                <div key={indice} className="flex items-start gap-2 text-sm text-stone-600">
+                  <Icone size={16} className={`shrink-0 mt-0.5 ${cor}`} />
+                  <span>{insight.texto}</span>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div className="bg-white rounded-lg border border-stone-200 p-5">
