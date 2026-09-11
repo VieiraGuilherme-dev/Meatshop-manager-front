@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Calendar } from 'lucide-react'
 import {
   Bar,
   BarChart,
@@ -63,12 +64,26 @@ export default function Dashboard() {
     buscarDados()
   }, [])
 
+  const dataHoje = new Date().toLocaleDateString('pt-BR', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  })
+
   const cabecalho = (
-    <div className="mb-6">
-      <h1 className="text-2xl font-bold text-stone-900">Visão geral</h1>
-      <p className="text-sm text-stone-500 mt-1">
-        {obterSaudacao()}, {nomeUsuario}. Aqui está o resumo financeiro do seu açougue.
-      </p>
+    <div className="flex flex-col sm:flex-row items-start justify-between mb-8">
+      <div>
+        <h1 className="text-2xl font-bold text-stone-900">Visão geral</h1>
+        <p className="text-sm text-stone-500 mt-1">
+          {obterSaudacao()}, {nomeUsuario}. Aqui está o resumo financeiro do seu açougue.
+        </p>
+      </div>
+
+      <div className="flex items-center gap-2 text-sm text-stone-500">
+        <Calendar size={16} />
+        <span>{dataHoje}</span>
+      </div>
     </div>
   )
 
