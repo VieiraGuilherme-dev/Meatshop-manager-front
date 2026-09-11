@@ -110,8 +110,8 @@ export default function Dashboard() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <Skeleton className="h-75 w-full" />
-          <Skeleton className="h-75 w-full" />
+          <Skeleton className="h-[300px] w-full" />
+          <Skeleton className="h-[300px] w-full" />
         </div>
       </div>
     )
@@ -147,7 +147,7 @@ export default function Dashboard() {
 
         <div className="bg-brand-50 rounded-lg border border-brand-500/20 p-5">
           <p className="text-sm text-brand-700 mb-1">Lucro Real</p>
-          <p className="text-2xl font-bold text-amber-900">
+          <p className="text-2xl font-bold text-brand-900">
             {formatarMoeda(lucro.lucro)}
           </p>
         </div>
