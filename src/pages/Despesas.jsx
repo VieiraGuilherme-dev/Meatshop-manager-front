@@ -129,7 +129,7 @@ export default function Despesas() {
 
   function nomeFuncionario(despesa) {
     const funcionarioId = despesa.funcionarioId ?? despesa.funcionario?.id
-    if (!funcionarioId) return '-'
+    if (!funcionarioId) return <span className="text-stone-400">—</span>
     return funcionarios.find((funcionario) => funcionario.id === funcionarioId)?.nome ?? '-'
   }
 
@@ -138,14 +138,26 @@ export default function Despesas() {
     {
       chave: 'amount',
       titulo: 'Valor',
-      render: (despesa) => formatarMoeda(despesa.amount),
+      render: (despesa) => (
+        <div className="text-right text-sm font-semibold text-stone-900">
+          {`− ${formatarMoeda(despesa.amount)}`}
+        </div>
+      ),
     },
     {
       chave: 'expenseDate',
       titulo: 'Data',
       render: (despesa) => formatarData(despesa.expenseDate),
     },
-    { chave: 'categoria', titulo: 'Categoria', render: nomeCategoria },
+    {
+      chave: 'categoria',
+      titulo: 'Categoria',
+      render: (despesa) => (
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-stone-100 text-stone-600">
+          {nomeCategoria(despesa)}
+        </span>
+      ),
+    },
     { chave: 'funcionario', titulo: 'Funcionário', render: nomeFuncionario },
     {
       chave: 'acoes',
@@ -191,11 +203,16 @@ export default function Despesas() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-stone-900">Despesas</h1>
+        <div>
+          <h1 className="text-2xl font-bold text-stone-900">Despesas</h1>
+          <p className="text-sm text-stone-500 mt-1">
+            Acompanhe e controle os gastos do seu açougue.
+          </p>
+        </div>
         {podeGerenciar && (
           <button
             onClick={abrirCriacao}
-            className="flex items-center gap-2 bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium px-4 py-2 rounded transition-colors"
+            className="flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
           >
             <Plus size={16} />
             Nova despesa
@@ -215,7 +232,7 @@ export default function Despesas() {
           podeGerenciar && (
             <button
               onClick={abrirCriacao}
-              className="flex items-center gap-2 bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium px-4 py-2 rounded transition-colors"
+              className="flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
             >
               <Plus size={16} />
               Criar primeira despesa

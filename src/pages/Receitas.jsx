@@ -119,14 +119,26 @@ export default function Receitas() {
     {
       chave: 'valor',
       titulo: 'Valor',
-      render: (receita) => formatarMoeda(receita.valor),
+      render: (receita) => (
+        <div className="text-right text-sm font-semibold text-stone-900">
+          {formatarMoeda(receita.valor)}
+        </div>
+      ),
     },
     {
       chave: 'data',
       titulo: 'Data',
       render: (receita) => formatarData(receita.data),
     },
-    { chave: 'categoria', titulo: 'Categoria', render: nomeCategoria },
+    {
+      chave: 'categoria',
+      titulo: 'Categoria',
+      render: (receita) => (
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-50 text-green-700">
+          {nomeCategoria(receita)}
+        </span>
+      ),
+    },
     {
       chave: 'acoes',
       titulo: 'Ações',
@@ -171,11 +183,16 @@ export default function Receitas() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-stone-900">Receitas</h1>
+        <div>
+          <h1 className="text-2xl font-bold text-stone-900">Receitas</h1>
+          <p className="text-sm text-stone-500 mt-1">
+            Acompanhe as entradas financeiras do seu açougue.
+          </p>
+        </div>
         {podeGerenciar && (
           <button
             onClick={abrirCriacao}
-            className="flex items-center gap-2 bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium px-4 py-2 rounded transition-colors"
+            className="flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
           >
             <Plus size={16} />
             Nova receita
@@ -195,7 +212,7 @@ export default function Receitas() {
           podeGerenciar && (
             <button
               onClick={abrirCriacao}
-              className="flex items-center gap-2 bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium px-4 py-2 rounded transition-colors"
+              className="flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
             >
               <Plus size={16} />
               Criar primeira receita
