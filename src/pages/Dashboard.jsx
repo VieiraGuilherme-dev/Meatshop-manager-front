@@ -28,6 +28,7 @@ import {
 import api from '../api/axios'
 import Skeleton from '../components/Skeleton'
 import { useAuth } from '../contexts/AuthContext'
+import { useTema } from '../contexts/TemaContext'
 import { formatarCompacto, formatarMoeda } from '../utils/formatadores'
 import { gerarInsights } from '../utils/insights'
 
@@ -51,8 +52,6 @@ const CORES_CATEGORIA = [
   '#6B2D06', '#8B3F08', '#A94E09', '#C2621A', '#D4813F', '#E5A272', '#F0C3A4',
 ]
 
-const TICK_EIXO = { fontSize: 12, fill: '#78716c' }
-
 function obterSaudacao() {
   const hora = new Date().getHours()
   if (hora < 12) return 'Bom dia'
@@ -66,24 +65,24 @@ function TooltipGrafico({ active, payload, label, formatarRotulo }) {
   const rotulo = formatarRotulo ? formatarRotulo(payload[0].payload) : label
 
   return (
-    <div className="bg-white border border-stone-200 rounded-lg shadow-lg p-3">
-      <p className="text-xs text-stone-500">{rotulo}</p>
-      <p className="text-sm font-semibold text-stone-900">
+    <div className="bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-lg shadow-lg p-3">
+      <p className="text-xs text-stone-500 dark:text-stone-400">{rotulo}</p>
+      <p className="text-sm font-semibold text-stone-900 dark:text-stone-100">
         {formatarMoeda(payload[0].value)}
       </p>
     </div>
   )
 }
 
-function TickCategoria({ x, y, payload, dados }) {
+function TickCategoria({ x, y, payload, dados, corPrimaria, corSecundaria }) {
   const item = dados.find((entrada) => entrada.categoriaNome === payload.value)
 
   return (
     <g transform={`translate(${x},${y})`}>
-      <text dy={14} textAnchor="middle" fontSize={12} fill="#78716c">
+      <text dy={14} textAnchor="middle" fontSize={12} fill={corPrimaria}>
         {payload.value}
       </text>
-      <text dy={30} textAnchor="middle" fontSize={11} fill="#a8a29e">
+      <text dy={30} textAnchor="middle" fontSize={11} fill={corSecundaria}>
         {item ? formatarCompacto(item.total) : ''}
       </text>
     </g>
@@ -140,8 +139,8 @@ function CardKpi({
   rotulo,
   valor,
   corValor,
-  corFundo = 'bg-white',
-  corBorda = 'border-stone-200',
+  corFundo = 'bg-white dark:bg-stone-900',
+  corBorda = 'border-stone-200 dark:border-stone-800',
   rodape,
   extra,
 }) {
@@ -152,7 +151,7 @@ function CardKpi({
           <Icone size={18} className="text-white" />
         </span>
         <div>
-          <p className="text-xs font-medium text-stone-500 uppercase tracking-wide">{rotulo}</p>
+          <p className="text-xs font-medium text-stone-500 dark:text-stone-400 uppercase tracking-wide">{rotulo}</p>
           <p className="text-[11px] text-stone-400">No período atual</p>
         </div>
       </div>
@@ -197,13 +196,13 @@ function BotaoNovaMovimentacao() {
       </button>
 
       {aberto && (
-        <div className="absolute right-0 mt-2 w-44 bg-white border border-stone-200 rounded-lg shadow-lg py-1 z-10">
+        <div className="absolute right-0 mt-2 w-44 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-lg shadow-lg py-1 z-10">
           <button
             onClick={() => {
               setAberto(false)
               navigate('/receitas')
             }}
-            className="w-full text-left px-4 py-2 text-sm text-stone-700 hover:bg-stone-50 transition-colors"
+            className="w-full text-left px-4 py-2 text-sm text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors"
           >
             Nova receita
           </button>
@@ -212,7 +211,7 @@ function BotaoNovaMovimentacao() {
               setAberto(false)
               navigate('/despesas')
             }}
-            className="w-full text-left px-4 py-2 text-sm text-stone-700 hover:bg-stone-50 transition-colors"
+            className="w-full text-left px-4 py-2 text-sm text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors"
           >
             Nova despesa
           </button>
@@ -224,6 +223,12 @@ function BotaoNovaMovimentacao() {
 
 export default function Dashboard() {
   const { usuario } = useAuth()
+  const { tema } = useTema()
+  const escuro = tema === 'escuro'
+  const corGradeGrafico = escuro ? '#292524' : '#f5f5f4'
+  const tickEixo = { fontSize: 12, fill: escuro ? '#a8a29e' : '#78716c' }
+  const tickCategoriaPrimario = escuro ? '#d6d3d1' : '#78716c'
+  const tickCategoriaSecundario = escuro ? '#78716c' : '#a8a29e'
   const nomeUsuario = usuario?.split('@')[0] ?? ''
   const [resumo, setResumo] = useState(null)
   const [despesasPorMes, setDespesasPorMes] = useState([])
@@ -272,15 +277,15 @@ export default function Dashboard() {
 
   const cabecalho = (
     <div className="mb-8">
-      <div className="flex justify-end items-center gap-2 text-sm text-stone-500 mb-4">
+      <div className="flex justify-end items-center gap-2 text-sm text-stone-500 dark:text-stone-400 mb-4">
         <Calendar size={16} />
         <span>{dataHoje}</span>
       </div>
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-[32px] font-bold text-stone-900">Dashboard</h1>
-          <p className="text-sm text-stone-500 mt-1">
+          <h1 className="text-[32px] font-bold text-stone-900 dark:text-stone-100">Dashboard</h1>
+          <p className="text-sm text-stone-500 dark:text-stone-400 mt-1">
             {obterSaudacao()}, {nomeUsuario}. Aqui está o resumo financeiro do seu açougue.
           </p>
         </div>
@@ -297,7 +302,7 @@ export default function Dashboard() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {[0, 1, 2, 3].map((indice) => (
-            <div key={indice} className="rounded-xl border border-stone-200 bg-white p-5">
+            <div key={indice} className="rounded-xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 p-5">
               <div className="flex items-center gap-2 mb-3">
                 <Skeleton className="h-9 w-9 rounded-full" />
                 <div className="flex-1">
@@ -362,7 +367,7 @@ export default function Dashboard() {
           rotulo="Lucro"
           valor={formatarMoeda(resumo.lucro)}
           corValor="text-brand-900"
-          corFundo="bg-brand-50"
+          corFundo="bg-brand-50 dark:bg-brand-900/20"
           corBorda="border-brand-500/20"
           rodape={
             <p className="text-xs text-brand-700 mt-2">Margem: {resumo.margemLucro.toFixed(1)}%</p>
@@ -374,9 +379,9 @@ export default function Dashboard() {
           corIcone="bg-indigo-400"
           rotulo="Funcionários"
           valor={`${resumo.funcionariosAtivos} ativos`}
-          corValor="text-stone-900"
+          corValor="text-stone-900 dark:text-stone-100"
           rodape={
-            <p className="text-xs text-stone-500 mt-2">Folha: {formatarMoeda(resumo.totalFolha)}</p>
+            <p className="text-xs text-stone-500 dark:text-stone-400 mt-2">Folha: {formatarMoeda(resumo.totalFolha)}</p>
           }
         />
       </div>
@@ -392,7 +397,7 @@ export default function Dashboard() {
             {insights.map((insight, indice) => {
               const { Icone, cor } = ICONE_INSIGHT[insight.tipo]
               return (
-                <div key={indice} className="flex items-start gap-2 px-5 py-4 text-sm text-stone-700">
+                <div key={indice} className="flex items-start gap-2 px-5 py-4 text-sm text-stone-700 dark:text-stone-300">
                   <Icone size={16} className={`shrink-0 mt-0.5 ${cor}`} />
                   <span>{insight.texto}</span>
                 </div>
@@ -403,8 +408,8 @@ export default function Dashboard() {
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="bg-white rounded-lg border border-stone-200 p-5">
-          <p className="text-base font-semibold text-stone-700">Despesas por mês</p>
+        <div className="bg-white dark:bg-stone-900 rounded-lg border border-stone-200 dark:border-stone-800 p-5">
+          <p className="text-base font-semibold text-stone-700 dark:text-stone-300">Despesas por mês</p>
           <p className="text-xs text-stone-400 mb-4">Últimos meses</p>
           <ResponsiveContainer width="100%" height={320}>
             <BarChart data={despesasPorMes}>
@@ -414,17 +419,17 @@ export default function Dashboard() {
                   <stop offset="100%" stopColor="#D4813F" />
                 </linearGradient>
               </defs>
-              <CartesianGrid vertical={false} stroke="#f5f5f4" />
-              <XAxis dataKey="mes" axisLine={false} tickLine={false} tick={TICK_EIXO} />
+              <CartesianGrid vertical={false} stroke={corGradeGrafico} />
+              <XAxis dataKey="mes" axisLine={false} tickLine={false} tick={tickEixo} />
               <YAxis
                 axisLine={false}
                 tickLine={false}
-                tick={TICK_EIXO}
+                tick={tickEixo}
                 tickFormatter={formatarCompacto}
               />
               <Tooltip
                 content={<TooltipGrafico formatarRotulo={(item) => item.mesCompleto} />}
-                cursor={{ fill: '#f5f5f4' }}
+                cursor={{ fill: corGradeGrafico }}
               />
               <Bar
                 dataKey="total"
@@ -436,27 +441,33 @@ export default function Dashboard() {
           </ResponsiveContainer>
         </div>
 
-        <div className="bg-white rounded-lg border border-stone-200 p-5">
-          <p className="text-base font-semibold text-stone-700">Despesas por categoria</p>
+        <div className="bg-white dark:bg-stone-900 rounded-lg border border-stone-200 dark:border-stone-800 p-5">
+          <p className="text-base font-semibold text-stone-700 dark:text-stone-300">Despesas por categoria</p>
           <p className="text-xs text-stone-400 mb-4">No período atual</p>
           <ResponsiveContainer width="100%" height={320}>
             <BarChart data={despesasPorCategoria} margin={{ bottom: 8 }}>
-              <CartesianGrid vertical={false} stroke="#f5f5f4" />
+              <CartesianGrid vertical={false} stroke={corGradeGrafico} />
               <XAxis
                 dataKey="categoriaNome"
                 interval={0}
                 height={48}
                 axisLine={false}
                 tickLine={false}
-                tick={<TickCategoria dados={despesasPorCategoria} />}
+                tick={
+                  <TickCategoria
+                    dados={despesasPorCategoria}
+                    corPrimaria={tickCategoriaPrimario}
+                    corSecundaria={tickCategoriaSecundario}
+                  />
+                }
               />
               <YAxis
                 axisLine={false}
                 tickLine={false}
-                tick={TICK_EIXO}
+                tick={tickEixo}
                 tickFormatter={formatarCompacto}
               />
-              <Tooltip content={<TooltipGrafico />} cursor={{ fill: '#f5f5f4' }} />
+              <Tooltip content={<TooltipGrafico />} cursor={{ fill: corGradeGrafico }} />
               <Bar dataKey="total" radius={[6, 6, 0, 0]} maxBarSize={48}>
                 {despesasPorCategoria.map((entrada, indice) => (
                   <Cell

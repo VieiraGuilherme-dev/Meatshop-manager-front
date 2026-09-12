@@ -15,7 +15,7 @@ const formInicial = { descricao: '', valor: '', data: '', categoriaId: '' }
 
 const inputClasses =
   'w-full border border-stone-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent'
-const labelClasses = 'block text-sm font-medium text-stone-700 mb-1'
+const labelClasses = 'block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1'
 
 export default function Receitas() {
   const { mostrarToast } = useToast()
@@ -120,7 +120,7 @@ export default function Receitas() {
       chave: 'valor',
       titulo: 'Valor',
       render: (receita) => (
-        <div className="text-right text-sm font-semibold text-stone-900">
+        <div className="text-right text-sm font-semibold text-stone-900 dark:text-stone-100">
           {formatarMoeda(receita.valor)}
         </div>
       ),
@@ -184,8 +184,8 @@ export default function Receitas() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-stone-900">Receitas</h1>
-          <p className="text-sm text-stone-500 mt-1">
+          <h1 className="text-2xl font-bold text-stone-900 dark:text-stone-100">Receitas</h1>
+          <p className="text-sm text-stone-500 dark:text-stone-400 mt-1">
             Acompanhe as entradas financeiras do seu açougue.
           </p>
         </div>

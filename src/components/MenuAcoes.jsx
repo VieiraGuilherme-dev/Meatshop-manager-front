@@ -56,7 +56,7 @@ export default function MenuAcoes({ itens }) {
           <div
             ref={menuRef}
             style={{ position: 'fixed', top: posicao.top, right: posicao.right }}
-            className="z-50 w-48 bg-white border border-stone-200 rounded-lg shadow-lg py-1"
+            className="z-50 w-48 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-lg shadow-lg py-1"
           >
             {itens.map((item) => (
               <button
@@ -66,7 +66,9 @@ export default function MenuAcoes({ itens }) {
                   item.onClick()
                 }}
                 className={`w-full flex items-center gap-2 px-4 py-2 text-sm transition-colors ${
-                  item.destrutivo ? 'text-red-600 hover:bg-red-50' : 'text-stone-700 hover:bg-stone-50'
+                  item.destrutivo
+                    ? 'text-red-600 hover:bg-red-50'
+                    : 'text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800'
                 }`}
               >
                 <item.icon size={16} />

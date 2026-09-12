@@ -53,14 +53,14 @@ export default function Relatorios() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-stone-900">Relatório financeiro</h1>
-      <p className="text-sm text-stone-500 mt-1 mb-6">
+      <h1 className="text-2xl font-bold text-stone-900 dark:text-stone-100">Relatório financeiro</h1>
+      <p className="text-sm text-stone-500 dark:text-stone-400 mt-1 mb-6">
         Selecione um período e exporte o resumo de receitas e despesas do seu açougue.
       </p>
 
       <div className="max-w-2xl flex flex-col gap-4">
-        <div className="bg-white rounded-lg border border-stone-200 p-6">
-          <p className="text-sm font-medium text-stone-700 mb-4">Período</p>
+        <div className="bg-white dark:bg-stone-900 rounded-lg border border-stone-200 dark:border-stone-800 p-6">
+          <p className="text-sm font-medium text-stone-700 dark:text-stone-300 mb-4">Período</p>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -84,13 +84,13 @@ export default function Relatorios() {
             </div>
           </div>
 
-          <p className="text-sm text-stone-500 mt-3">
+          <p className="text-sm text-stone-500 dark:text-stone-400 mt-3">
             Deixe em branco para incluir todo o histórico.
           </p>
         </div>
 
-        <div className="bg-white rounded-lg border border-stone-200 p-6">
-          <p className="text-sm font-medium text-stone-700 mb-4">Exportar</p>
+        <div className="bg-white dark:bg-stone-900 rounded-lg border border-stone-200 dark:border-stone-800 p-6">
+          <p className="text-sm font-medium text-stone-700 dark:text-stone-300 mb-4">Exportar</p>
 
           {erro && <p className="text-sm text-red-600 mb-4">{erro}</p>}
 
@@ -106,13 +106,13 @@ export default function Relatorios() {
             <button
               onClick={exportarExcel}
               disabled={baixandoExcel}
-              className="border border-stone-300 text-stone-700 rounded px-4 py-2 text-sm font-medium hover:bg-stone-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="border border-stone-300 text-stone-700 dark:text-stone-300 rounded px-4 py-2 text-sm font-medium hover:bg-stone-50 dark:hover:bg-stone-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               {baixandoExcel ? 'Exportando...' : 'Exportar Excel'}
             </button>
           </div>
 
-          <p className="text-sm text-stone-500 mt-4">
+          <p className="text-sm text-stone-500 dark:text-stone-400 mt-4">
             PDF para leitura e impressão, Excel para análise em planilha.
           </p>
         </div>

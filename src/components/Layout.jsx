@@ -8,17 +8,20 @@ import {
   TrendingDown,
   FileText,
   LogOut,
+  Moon,
+  Sun,
   User,
   Beef,
 } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
+import { useTema } from '../contexts/TemaContext'
 
 const linkBase = 'flex items-center gap-3 px-3 py-2 text-sm rounded transition-colors'
 
 function classesLink({ isActive }) {
   return isActive
-    ? `${linkBase} bg-brand-50 text-brand-700 font-medium`
-    : `${linkBase} text-stone-600 hover:bg-stone-100 hover:text-stone-900`
+    ? `${linkBase} bg-brand-50 dark:bg-brand-900/20 text-brand-700 font-medium`
+    : `${linkBase} text-stone-600 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800 hover:text-stone-900 dark:hover:text-stone-100`
 }
 
 const grupos = [
@@ -48,10 +51,11 @@ const grupos = [
 
 export default function Layout() {
   const { logout, usuario, role } = useAuth()
+  const { tema, alternarTema } = useTema()
   const [sidebarAberta, setSidebarAberta] = useState(false)
 
   return (
-    <div className="min-h-screen bg-brand-100">
+    <div className="min-h-screen bg-brand-100 dark:bg-stone-950">
       {sidebarAberta && (
         <div
           className="fixed inset-0 bg-black/50 z-30 md:hidden"
@@ -60,18 +64,18 @@ export default function Layout() {
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-40 w-60 bg-white border-r border-stone-200 flex flex-col transition-transform duration-200 md:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-40 w-60 bg-white dark:bg-stone-900 border-r border-stone-200 dark:border-stone-800 flex flex-col transition-transform duration-200 md:translate-x-0 ${
           sidebarAberta ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <div className="flex items-center justify-between px-4 py-5 border-b border-stone-200">
+        <div className="flex items-center justify-between px-4 py-5 border-b border-stone-200 dark:border-stone-800">
           <div className="flex items-center gap-3">
             <div className="bg-brand-500 rounded-lg p-2">
               <Beef size={20} className="text-white" />
             </div>
             <div>
-              <p className="font-bold text-stone-900 leading-tight">MeatShop</p>
-              <p className="text-xs text-stone-500">Gestão financeira</p>
+              <p className="font-bold text-stone-900 dark:text-stone-100 leading-tight">MeatShop</p>
+              <p className="text-xs text-stone-500 dark:text-stone-400">Gestão financeira</p>
             </div>
           </div>
           <button
@@ -111,18 +115,26 @@ export default function Layout() {
           ))}
         </nav>
 
-        <div className="p-3 border-t border-stone-200">
+        <div className="p-3 border-t border-stone-200 dark:border-stone-800">
+          <button
+            onClick={alternarTema}
+            className="w-full flex items-center gap-3 text-left px-3 py-2 rounded text-sm text-stone-600 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800 hover:text-stone-900 dark:hover:text-stone-100 transition-colors mb-1"
+          >
+            {tema === 'escuro' ? <Sun size={18} /> : <Moon size={18} />}
+            {tema === 'escuro' ? 'Tema claro' : 'Tema escuro'}
+          </button>
+
           <div className="flex items-center gap-2 px-3 py-2 mb-1">
             <User size={18} className="text-stone-400 shrink-0" />
             <div className="min-w-0">
-              <p className="text-sm text-stone-700 truncate">{usuario}</p>
-              <p className="text-xs text-stone-500">{role}</p>
+              <p className="text-sm text-stone-700 dark:text-stone-300 truncate">{usuario}</p>
+              <p className="text-xs text-stone-500 dark:text-stone-400">{role}</p>
             </div>
           </div>
 
           <button
             onClick={logout}
-            className="w-full flex items-center gap-3 text-left px-3 py-2 rounded text-sm text-stone-600 hover:bg-stone-100 hover:text-red-600 transition-colors"
+            className="w-full flex items-center gap-3 text-left px-3 py-2 rounded text-sm text-stone-600 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800 hover:text-red-600 transition-colors"
           >
             <LogOut size={18} />
             Sair
@@ -131,11 +143,11 @@ export default function Layout() {
       </aside>
 
       <div className="md:ml-60">
-        <div className="md:hidden sticky top-0 z-20 bg-white border-b border-stone-200 h-14 flex items-center gap-3 px-4">
+        <div className="md:hidden sticky top-0 z-20 bg-white dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800 h-14 flex items-center gap-3 px-4">
           <button
             onClick={() => setSidebarAberta(true)}
             aria-label="Abrir menu"
-            className="text-stone-600 hover:text-stone-900 transition-colors"
+            className="text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 transition-colors"
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <line x1="3" y1="6" x2="21" y2="6" strokeLinecap="round" />
@@ -146,7 +158,7 @@ export default function Layout() {
           <span className="font-bold text-brand-700">MeatShop</span>
         </div>
 
-        <main className="min-h-screen bg-brand-100 p-4 md:p-8">
+        <main className="min-h-screen bg-brand-100 dark:bg-stone-950 p-4 md:p-8">
           <Outlet />
         </main>
       </div>

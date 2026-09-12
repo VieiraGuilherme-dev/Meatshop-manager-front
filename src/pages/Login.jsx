@@ -86,16 +86,16 @@ export default function Login() {
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col items-center justify-center bg-stone-50 px-4">
-        <div className="w-full max-w-100 bg-white border border-stone-200 rounded-2xl shadow-sm p-10">
-          <h2 className="text-2xl font-bold text-stone-900 mb-1">Bem-vindo de volta!</h2>
-          <p className="text-sm text-stone-500 mb-6">
+      <div className="flex-1 flex flex-col items-center justify-center bg-stone-50 dark:bg-stone-950 px-4">
+        <div className="w-full max-w-100 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-2xl shadow-sm p-10">
+          <h2 className="text-2xl font-bold text-stone-900 dark:text-stone-100 mb-1">Bem-vindo de volta!</h2>
+          <p className="text-sm text-stone-500 dark:text-stone-400 mb-6">
             Acesse o painel financeiro do seu açougue.
           </p>
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div>
-              <label className="block text-sm font-medium text-stone-700 mb-1">Email</label>
+              <label className="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1">Email</label>
               <div className="relative">
                 <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
                 <input
@@ -109,7 +109,7 @@ export default function Login() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-stone-700 mb-1">Senha</label>
+              <label className="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1">Senha</label>
               <div className="relative">
                 <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
                 <input

@@ -20,7 +20,7 @@ export default function ConfirmarExclusao({
         <button
           onClick={onCancelar}
           disabled={carregando}
-          className="border border-stone-300 text-stone-700 rounded px-4 py-2 text-sm font-medium hover:bg-stone-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="border border-stone-300 text-stone-700 dark:text-stone-300 rounded px-4 py-2 text-sm font-medium hover:bg-stone-50 dark:hover:bg-stone-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           Cancelar
         </button>

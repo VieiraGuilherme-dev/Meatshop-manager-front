@@ -23,7 +23,7 @@ export function ToastProvider({ children }) {
         {toasts.map((toast) => (
           <div
             key={toast.id}
-            className="flex items-center gap-2 bg-white border border-stone-200 shadow-lg rounded-lg px-4 py-3 text-sm text-stone-700 animate-[toast-in_0.2s_ease-out]"
+            className="flex items-center gap-2 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 shadow-lg rounded-lg px-4 py-3 text-sm text-stone-700 dark:text-stone-300 animate-[toast-in_0.2s_ease-out]"
           >
             {toast.tipo === 'erro' ? (
               <XCircle size={18} className="text-red-600 shrink-0" />
