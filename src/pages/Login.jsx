@@ -4,9 +4,21 @@ import { Beef, Eye, EyeOff, FileText, Lock, Mail, Users, Wallet } from 'lucide-r
 import { useAuth } from '../contexts/AuthContext'
 
 const beneficios = [
-  { icone: Wallet, texto: 'Controle de receitas e despesas' },
-  { icone: Users, texto: 'Gestão de funcionários' },
-  { icone: FileText, texto: 'Relatórios em PDF e Excel' },
+  {
+    icone: Wallet,
+    titulo: 'Controle financeiro',
+    descricao: 'Acompanhe receitas, despesas e lucro.',
+  },
+  {
+    icone: Users,
+    titulo: 'Funcionários',
+    descricao: 'Gerencie sua equipe e folha de pagamento.',
+  },
+  {
+    icone: FileText,
+    titulo: 'Relatórios',
+    descricao: 'Exporte seus dados para PDF e Excel.',
+  },
 ]
 
 export default function Login() {
@@ -53,23 +65,33 @@ export default function Login() {
           <h1 className="text-3xl font-bold text-white mb-3">MeatShop Manager</h1>
           <p className="text-amber-100 mb-10">Gestão financeira inteligente para o seu açougue.</p>
 
-          <div className="flex flex-col gap-4">
-            {beneficios.map(({ icone: Icone, texto }) => (
-              <div key={texto} className="flex items-center gap-3">
+          <div className="flex flex-col gap-5">
+            {beneficios.map(({ icone: Icone, titulo, descricao }) => (
+              <div key={titulo} className="flex items-start gap-3">
                 <span className="flex items-center justify-center w-10 h-10 rounded-full bg-white/10 shrink-0">
                   <Icone size={18} className="text-white" />
                 </span>
-                <span className="text-sm text-white">{texto}</span>
+                <div>
+                  <p className="text-sm font-semibold text-white">{titulo}</p>
+                  <p className="text-sm text-amber-100/80">{descricao}</p>
+                </div>
               </div>
             ))}
           </div>
+
+          <p className="text-sm text-amber-100/70 mt-10">
+            Tenha uma visão clara do seu negócio. Controle receitas, despesas e resultados em
+            um só lugar.
+          </p>
         </div>
       </div>
 
-      <div className="flex-1 flex items-center justify-center bg-stone-50 px-4">
-        <div className="w-full max-w-sm">
-          <h2 className="text-2xl font-bold text-stone-900 mb-1">Bem-vindo de volta</h2>
-          <p className="text-sm text-stone-500 mb-6">Entre na sua conta para continuar</p>
+      <div className="flex-1 flex flex-col items-center justify-center bg-stone-50 px-4">
+        <div className="w-full max-w-100 bg-white border border-stone-200 rounded-2xl shadow-sm p-10">
+          <h2 className="text-2xl font-bold text-stone-900 mb-1">Bem-vindo de volta!</h2>
+          <p className="text-sm text-stone-500 mb-6">
+            Acesse o painel financeiro do seu açougue.
+          </p>
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div>
@@ -112,16 +134,16 @@ export default function Login() {
             <button
               type="submit"
               disabled={carregando}
-              className="w-full bg-brand-600 text-white rounded px-4 py-3 text-sm font-medium hover:bg-brand-700 disabled:bg-stone-400 disabled:cursor-not-allowed transition-colors"
+              className="w-full h-12 bg-brand-600 text-white rounded-lg text-sm font-medium hover:bg-brand-700 disabled:bg-stone-400 disabled:cursor-not-allowed transition-colors"
             >
               {carregando ? 'Entrando...' : 'Entrar'}
             </button>
           </form>
-
-          <p className="text-xs text-stone-400 text-center mt-6">
-            MeatShop Manager • Gestão financeira
-          </p>
         </div>
+
+        <p className="text-xs text-stone-400 text-center mt-6">
+          MeatShop Manager • Gestão financeira
+        </p>
       </div>
     </div>
   )
