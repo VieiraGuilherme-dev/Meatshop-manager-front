@@ -33,9 +33,9 @@ import { formatarCompacto, formatarMoeda } from '../utils/formatadores'
 import { gerarInsights } from '../utils/insights'
 
 const ICONE_INSIGHT = {
-  alerta: { Icone: AlertTriangle, cor: 'text-amber-600' },
-  positivo: { Icone: TrendingUp, cor: 'text-green-600' },
-  neutro: { Icone: Info, cor: 'text-stone-400' },
+  alerta: { Icone: AlertTriangle, cor: 'text-amber-600 dark:text-amber-400' },
+  positivo: { Icone: TrendingUp, cor: 'text-green-600 dark:text-green-400' },
+  neutro: { Icone: Info, cor: 'text-stone-500 dark:text-stone-400' },
 }
 
 const MESES_ABREVIADOS = [
@@ -387,17 +387,17 @@ export default function Dashboard() {
       </div>
 
       {insights.length > 0 && (
-        <div className="flex flex-col sm:flex-row bg-amber-50 border border-amber-200 rounded-xl mb-8 overflow-hidden">
-          <div className="flex items-center gap-2 px-5 py-4 sm:border-r sm:border-amber-200">
-            <Lightbulb size={18} className="text-amber-600 shrink-0" />
-            <span className="font-semibold text-stone-800 whitespace-nowrap">Insights</span>
+        <div className="flex flex-col sm:flex-row bg-amber-100 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800/60 rounded-xl mb-8 overflow-hidden">
+          <div className="flex items-center gap-2 px-5 py-4 sm:border-r sm:border-amber-300 dark:sm:border-amber-800/60">
+            <Lightbulb size={18} className="text-amber-800 dark:text-amber-400 shrink-0" />
+            <span className="font-semibold text-amber-800 dark:text-amber-400 whitespace-nowrap">Insights</span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-amber-200 flex-1">
+          <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-amber-300 dark:divide-amber-800/60 flex-1">
             {insights.map((insight, indice) => {
               const { Icone, cor } = ICONE_INSIGHT[insight.tipo]
               return (
-                <div key={indice} className="flex items-start gap-2 px-5 py-4 text-sm text-stone-700 dark:text-stone-300">
+                <div key={indice} className="flex items-start gap-2 px-5 py-4 text-sm text-amber-950 dark:text-amber-100">
                   <Icone size={16} className={`shrink-0 mt-0.5 ${cor}`} />
                   <span>{insight.texto}</span>
                 </div>
